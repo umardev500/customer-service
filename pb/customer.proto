@@ -52,7 +52,25 @@ message CustomerFindOneRequest {
     string pass = 3;
 }
 
+message CustomerFindAllRequest {
+    string sort = 1;
+    int64 page = 2;
+    int64 perPage = 3;
+    string search = 4;
+    string status = 5;
+}
+
+message CustomerFindAllResponse {
+    repeated Customer customers = 1;
+    int64 rows = 2;
+    int64 pages = 3;
+    int64 per_page = 4;
+    int64 active_page = 5;
+    int64 total = 6;
+}
+
 service CustomerService {
     rpc Create(CustomerCreateRequest) returns (Empty) {}
     rpc FindOne(CustomerFindOneRequest) returns (Customer) {}
+    rpc FindAll(CustomerFindAllRequest) returns (CustomerFindAllResponse) {}
 }

@@ -15,3 +15,7 @@ create:
 
 findOne:
 	grpcurl --plaintext -d '{"user": "customeruser", "pass": "secret"}' localhost:5012 CustomerService.FindOne
+
+find:
+	grpcurl --plaintext localhost:5012 CustomerService.FindAll
+	

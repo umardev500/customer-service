@@ -23,6 +23,12 @@ func NewCustomerUsecase(repo domain.CustomerRepository) domain.CustomerUsecase {
 // Template
 // func (pu *CustomerUsecase) {}
 
+func (pu *CustomerUsecase) FindAll(req *pb.CustomerFindAllRequest) (customers *pb.CustomerFindAllResponse, err error) {
+	customers, err = pu.repository.FindAll(req)
+
+	return
+}
+
 func (pu *CustomerUsecase) FindOne(req *pb.CustomerFindOneRequest) (customer *pb.Customer, err error) {
 	customer, err = pu.repository.FindOne(req)
 

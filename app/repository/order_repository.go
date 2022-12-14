@@ -28,31 +28,7 @@ func NewCustomerRepository(db *mongo.Database) domain.CustomerRepository {
 // 	defer cancel()
 // }
 
-func (pr *CustomerRepository) FindOne(req *pb.CustomerFindOneRequest) (customer *pb.Customer, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	var data domain.Customer
-
-	filter := bson.M{
-		"$or": []bson.M{
-			{
-				"customer_id": req.CustomerId,
-			},
-			{
-				"$and": []bson.M{
-					{"user": req.User},
-					{"pass": req.Pass},
-				},
-			},
-		},
-	}
-
-	err = pr.customers.FindOne(ctx, filter).Decode(&data)
-	if err != nil {
-		return
-	}
-
+func (pr *CustomerRepository) parseCustomerResponse(data domain.Customer) (customer *pb.Customer) {
 	var location *pb.CustomerLocation
 
 	if data.Detail.Location != nil {
@@ -88,6 +64,65 @@ func (pr *CustomerRepository) FindOne(req *pb.CustomerFindOneRequest) (customer 
 		UpdatedAt:  data.UpdatedAt,
 		DeletedAt:  data.DeletedAt,
 	}
+
+	return
+}
+
+func (pr *CustomerRepository) FindAll(req *pb.CustomerFindAllRequest) (customers *pb.CustomerFindAllResponse, err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	customers = &pb.CustomerFindAllResponse{}
+
+	filter := bson.M{}
+	cur, err := pr.customers.Find(ctx, filter)
+	if err != nil {
+		return
+	}
+
+	defer cur.Close(ctx)
+
+	for cur.Next(ctx) {
+		var each domain.Customer
+
+		err = cur.Decode(&each)
+		if err != nil {
+			return
+		}
+
+		customer := pr.parseCustomerResponse(each)
+		customers.Customers = append(customers.Customers, customer)
+	}
+
+	return
+}
+
+func (pr *CustomerRepository) FindOne(req *pb.CustomerFindOneRequest) (customer *pb.Customer, err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	var data domain.Customer
+
+	filter := bson.M{
+		"$or": []bson.M{
+			{
+				"customer_id": req.CustomerId,
+			},
+			{
+				"$and": []bson.M{
+					{"user": req.User},
+					{"pass": req.Pass},
+				},
+			},
+		},
+	}
+
+	err = pr.customers.FindOne(ctx, filter).Decode(&data)
+	if err != nil {
+		return
+	}
+
+	customer = pr.parseCustomerResponse(data)
 
 	return
 }

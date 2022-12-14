@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type CustomerServiceClient interface {
 	Create(ctx context.Context, in *CustomerCreateRequest, opts ...grpc.CallOption) (*Empty, error)
 	FindOne(ctx context.Context, in *CustomerFindOneRequest, opts ...grpc.CallOption) (*Customer, error)
+	FindAll(ctx context.Context, in *CustomerFindAllRequest, opts ...grpc.CallOption) (*CustomerFindAllResponse, error)
 }
 
 type customerServiceClient struct {
@@ -52,12 +53,22 @@ func (c *customerServiceClient) FindOne(ctx context.Context, in *CustomerFindOne
 	return out, nil
 }
 
+func (c *customerServiceClient) FindAll(ctx context.Context, in *CustomerFindAllRequest, opts ...grpc.CallOption) (*CustomerFindAllResponse, error) {
+	out := new(CustomerFindAllResponse)
+	err := c.cc.Invoke(ctx, "/CustomerService/FindAll", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CustomerServiceServer is the server API for CustomerService service.
 // All implementations must embed UnimplementedCustomerServiceServer
 // for forward compatibility
 type CustomerServiceServer interface {
 	Create(context.Context, *CustomerCreateRequest) (*Empty, error)
 	FindOne(context.Context, *CustomerFindOneRequest) (*Customer, error)
+	FindAll(context.Context, *CustomerFindAllRequest) (*CustomerFindAllResponse, error)
 	mustEmbedUnimplementedCustomerServiceServer()
 }
 
@@ -70,6 +81,9 @@ func (UnimplementedCustomerServiceServer) Create(context.Context, *CustomerCreat
 }
 func (UnimplementedCustomerServiceServer) FindOne(context.Context, *CustomerFindOneRequest) (*Customer, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindOne not implemented")
+}
+func (UnimplementedCustomerServiceServer) FindAll(context.Context, *CustomerFindAllRequest) (*CustomerFindAllResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindAll not implemented")
 }
 func (UnimplementedCustomerServiceServer) mustEmbedUnimplementedCustomerServiceServer() {}
 
@@ -120,6 +134,24 @@ func _CustomerService_FindOne_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CustomerService_FindAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CustomerFindAllRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CustomerServiceServer).FindAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/CustomerService/FindAll",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CustomerServiceServer).FindAll(ctx, req.(*CustomerFindAllRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CustomerService_ServiceDesc is the grpc.ServiceDesc for CustomerService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -134,6 +166,10 @@ var CustomerService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "FindOne",
 			Handler:    _CustomerService_FindOne_Handler,
+		},
+		{
+			MethodName: "FindAll",
+			Handler:    _CustomerService_FindAll_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
