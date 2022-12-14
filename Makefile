@@ -19,3 +19,6 @@ findOne:
 find:
 	grpcurl --plaintext localhost:5012 CustomerService.FindAll
 	
+findSearch:
+	grpcurl --plaintext -d '{"search": "1671196175094202250", "status": "deleted"}' localhost:5012 CustomerService.FindAll
+	

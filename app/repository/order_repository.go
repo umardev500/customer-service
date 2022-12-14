@@ -4,10 +4,13 @@ import (
 	"context"
 	"customer/domain"
 	"customer/pb"
+	"math"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type CustomerRepository struct {
@@ -72,10 +75,47 @@ func (pr *CustomerRepository) FindAll(req *pb.CustomerFindAllRequest) (customers
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
+	s := req.Search
+	status := bson.M{"status": req.Status}
+	if req.Status == "" && req.Status != "deleted" {
+		status = bson.M{"status": bson.M{"$ne": nil}}
+	}
+
+	deleted := bson.M{"deleted_at": bson.M{"$eq": nil}}
+
 	customers = &pb.CustomerFindAllResponse{}
 
-	filter := bson.M{}
-	cur, err := pr.customers.Find(ctx, filter)
+	filter := bson.M{
+		"$or": []bson.M{
+			{
+				"customer_id": bson.M{
+					"$regex": primitive.Regex{
+						Pattern: s,
+						Options: "i",
+					},
+				},
+			},
+		},
+		"$and": []bson.M{
+			status,
+			deleted,
+		},
+	}
+
+	findOpt := options.Find()
+
+	if req.Sort == "desc" {
+		findOpt.SetSort(bson.M{"customer_id": -1})
+	}
+
+	page := req.Page
+	perPage := req.PerPage
+	offset := page * perPage
+
+	findOpt.SetSkip(offset)
+	findOpt.SetLimit(perPage)
+
+	cur, err := pr.customers.Find(ctx, filter, findOpt)
 	if err != nil {
 		return
 	}
@@ -93,6 +133,24 @@ func (pr *CustomerRepository) FindAll(req *pb.CustomerFindAllRequest) (customers
 		customer := pr.parseCustomerResponse(each)
 		customers.Customers = append(customers.Customers, customer)
 	}
+
+	rows, _ := pr.customers.CountDocuments(ctx, filter)
+
+	dataSize := int64(len(customers.Customers))
+	customers.Rows = rows
+	customers.Pages = int64(math.Ceil(float64(rows) / float64(perPage)))
+	if dataSize < 1 {
+		customers.Pages = 0
+	} else if perPage == 0 {
+		customers.Pages = 1
+	}
+
+	customers.PerPage = perPage
+	customers.ActivePage = page + 1
+	if dataSize < 1 {
+		customers.ActivePage = 0
+	}
+	customers.Total = dataSize
 
 	return
 }
