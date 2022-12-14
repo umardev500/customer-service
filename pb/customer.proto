@@ -74,9 +74,15 @@ message CustomerChangeStatusRequest {
     string status = 2;
 }
 
+message CustomerUpdateDetailRequest {
+    string customer_id = 1;
+    CustomerDetail detail = 2;
+}
+
 service CustomerService {
     rpc Create(CustomerCreateRequest) returns (Empty) {}
     rpc FindOne(CustomerFindOneRequest) returns (Customer) {}
     rpc FindAll(CustomerFindAllRequest) returns (CustomerFindAllResponse) {}
     rpc ChangeStatus(CustomerChangeStatusRequest) returns (OperationResponse) {}
+    rpc UpdateDetail(CustomerUpdateDetailRequest) returns (OperationResponse) {}
 }

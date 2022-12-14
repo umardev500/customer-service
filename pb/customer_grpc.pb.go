@@ -26,6 +26,7 @@ type CustomerServiceClient interface {
 	FindOne(ctx context.Context, in *CustomerFindOneRequest, opts ...grpc.CallOption) (*Customer, error)
 	FindAll(ctx context.Context, in *CustomerFindAllRequest, opts ...grpc.CallOption) (*CustomerFindAllResponse, error)
 	ChangeStatus(ctx context.Context, in *CustomerChangeStatusRequest, opts ...grpc.CallOption) (*OperationResponse, error)
+	UpdateDetail(ctx context.Context, in *CustomerUpdateDetailRequest, opts ...grpc.CallOption) (*OperationResponse, error)
 }
 
 type customerServiceClient struct {
@@ -72,6 +73,15 @@ func (c *customerServiceClient) ChangeStatus(ctx context.Context, in *CustomerCh
 	return out, nil
 }
 
+func (c *customerServiceClient) UpdateDetail(ctx context.Context, in *CustomerUpdateDetailRequest, opts ...grpc.CallOption) (*OperationResponse, error) {
+	out := new(OperationResponse)
+	err := c.cc.Invoke(ctx, "/CustomerService/UpdateDetail", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CustomerServiceServer is the server API for CustomerService service.
 // All implementations must embed UnimplementedCustomerServiceServer
 // for forward compatibility
@@ -80,6 +90,7 @@ type CustomerServiceServer interface {
 	FindOne(context.Context, *CustomerFindOneRequest) (*Customer, error)
 	FindAll(context.Context, *CustomerFindAllRequest) (*CustomerFindAllResponse, error)
 	ChangeStatus(context.Context, *CustomerChangeStatusRequest) (*OperationResponse, error)
+	UpdateDetail(context.Context, *CustomerUpdateDetailRequest) (*OperationResponse, error)
 	mustEmbedUnimplementedCustomerServiceServer()
 }
 
@@ -98,6 +109,9 @@ func (UnimplementedCustomerServiceServer) FindAll(context.Context, *CustomerFind
 }
 func (UnimplementedCustomerServiceServer) ChangeStatus(context.Context, *CustomerChangeStatusRequest) (*OperationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ChangeStatus not implemented")
+}
+func (UnimplementedCustomerServiceServer) UpdateDetail(context.Context, *CustomerUpdateDetailRequest) (*OperationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateDetail not implemented")
 }
 func (UnimplementedCustomerServiceServer) mustEmbedUnimplementedCustomerServiceServer() {}
 
@@ -184,6 +198,24 @@ func _CustomerService_ChangeStatus_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CustomerService_UpdateDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CustomerUpdateDetailRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CustomerServiceServer).UpdateDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/CustomerService/UpdateDetail",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CustomerServiceServer).UpdateDetail(ctx, req.(*CustomerUpdateDetailRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CustomerService_ServiceDesc is the grpc.ServiceDesc for CustomerService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -206,6 +238,10 @@ var CustomerService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ChangeStatus",
 			Handler:    _CustomerService_ChangeStatus_Handler,
+		},
+		{
+			MethodName: "UpdateDetail",
+			Handler:    _CustomerService_UpdateDetail_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

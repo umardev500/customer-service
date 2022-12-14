@@ -23,6 +23,13 @@ func NewCustomerUsecase(repo domain.CustomerRepository) domain.CustomerUsecase {
 // Template
 // func (pu *CustomerUsecase) {}
 
+func (pu *CustomerUsecase) UpdateDetail(req *pb.CustomerUpdateDetailRequest) (affected bool, err error) {
+	updatedTime := time.Now().UTC().Unix()
+	affected, err = pu.repository.UpdateDetail(req, updatedTime)
+
+	return
+}
+
 func (pu *CustomerUsecase) ChangeStatus(req *pb.CustomerChangeStatusRequest) (affected bool, err error) {
 	updatedTime := time.Now().UTC().Unix()
 	affected, err = pu.repository.ChangeStatus(req, updatedTime)

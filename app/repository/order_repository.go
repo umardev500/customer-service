@@ -71,6 +71,53 @@ func (pr *CustomerRepository) parseCustomerResponse(data domain.Customer) (custo
 // 	defer cancel()
 // }
 
+func (pr *CustomerRepository) UpdateDetail(req *pb.CustomerUpdateDetailRequest, updatedTime int64) (affected bool, err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	filter := bson.M{"customer_id": req.CustomerId}
+
+	var location bson.M
+
+	if req.Detail.Location != nil {
+		location = bson.M{
+			"address":     req.Detail.Location.Address,
+			"village":     req.Detail.Location.Village,
+			"district":    req.Detail.Location.District,
+			"city":        req.Detail.Location.City,
+			"province":    req.Detail.Location.Province,
+			"postal_code": req.Detail.Location.PostalCode,
+		}
+	}
+
+	detail := bson.M{
+		"npsn":     req.Detail.Npsn,
+		"name":     req.Detail.Name,
+		"email":    req.Detail.Email,
+		"wa":       req.Detail.Wa,
+		"type":     req.Detail.Type,
+		"level":    req.Detail.Level,
+		"about":    req.Detail.About,
+		"location": location,
+	}
+
+	if req.Detail.Location == nil {
+		delete(detail, "location")
+	}
+
+	payload := bson.M{
+		"detail": detail,
+	}
+	set := bson.M{"$set": payload}
+	resp, err := pr.customers.UpdateOne(ctx, filter, set)
+
+	if resp.ModifiedCount > 0 {
+		affected = true
+	}
+
+	return
+}
+
 func (pr *CustomerRepository) ChangeStatus(req *pb.CustomerChangeStatusRequest, updatedTime int64) (affected bool, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
