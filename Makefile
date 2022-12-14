@@ -12,3 +12,6 @@ clean:
 # grpcurl execution
 create:
 	grpcurl --plaintext -d '{"user": "customeruser", "pass": "secret", "detail": {"name": "SMK Walisongo", "email": "walisongo@gmail.com", "wa": "083879154310"}}' localhost:5012 CustomerService.Create
+
+findOne:
+	grpcurl --plaintext -d '{"user": "customeruser", "pass": "secret"}' localhost:5012 CustomerService.FindOne

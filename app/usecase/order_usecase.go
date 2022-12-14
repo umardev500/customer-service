@@ -23,6 +23,12 @@ func NewCustomerUsecase(repo domain.CustomerRepository) domain.CustomerUsecase {
 // Template
 // func (pu *CustomerUsecase) {}
 
+func (pu *CustomerUsecase) FindOne(req *pb.CustomerFindOneRequest) (customer *pb.Customer, err error) {
+	customer, err = pu.repository.FindOne(req)
+
+	return
+}
+
 func (pu *CustomerUsecase) Save(req *pb.CustomerCreateRequest) (err error) {
 	t := time.Now()
 	createdTime := t.Unix()

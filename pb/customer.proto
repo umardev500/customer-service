@@ -34,6 +34,25 @@ message CustomerCreateRequest {
     CustomerDetail detail = 3;
 }
 
+message Customer {
+    string customer_id = 1;
+    string user = 2;
+    string pass = 3;
+    CustomerDetail detail = 4;
+    string status = 5;
+    int64 exp_until = 6;
+    int64 created_at = 7;
+    int64 updated_at = 8;
+    int64 deleted_at = 9;
+}
+
+message CustomerFindOneRequest {
+    string customer_id = 1;
+    string user = 2;
+    string pass = 3;
+}
+
 service CustomerService {
     rpc Create(CustomerCreateRequest) returns (Empty) {}
+    rpc FindOne(CustomerFindOneRequest) returns (Customer) {}
 }

@@ -28,6 +28,70 @@ func NewCustomerRepository(db *mongo.Database) domain.CustomerRepository {
 // 	defer cancel()
 // }
 
+func (pr *CustomerRepository) FindOne(req *pb.CustomerFindOneRequest) (customer *pb.Customer, err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	var data domain.Customer
+
+	filter := bson.M{
+		"$or": []bson.M{
+			{
+				"customer_id": req.CustomerId,
+			},
+			{
+				"$and": []bson.M{
+					{"user": req.User},
+					{"pass": req.Pass},
+				},
+			},
+		},
+	}
+
+	err = pr.customers.FindOne(ctx, filter).Decode(&data)
+	if err != nil {
+		return
+	}
+
+	var location *pb.CustomerLocation
+
+	if data.Detail.Location != nil {
+		location = &pb.CustomerLocation{
+			Address:    data.Detail.Location.Address,
+			Village:    data.Detail.Location.Village,
+			District:   data.Detail.Location.District,
+			City:       data.Detail.Location.City,
+			Province:   data.Detail.Location.Province,
+			PostalCode: data.Detail.Location.PostalCode,
+		}
+	}
+
+	detail := &pb.CustomerDetail{
+		Npsn:     data.Detail.Npsn,
+		Name:     data.Detail.Name,
+		Email:    data.Detail.Email,
+		Wa:       data.Detail.Wa,
+		Type:     data.Detail.Type,
+		Level:    data.Detail.Level,
+		About:    data.Detail.About,
+		Location: location,
+	}
+
+	customer = &pb.Customer{
+		CustomerId: data.CustomerId,
+		User:       data.User,
+		Pass:       data.Pass,
+		Detail:     detail,
+		ExpUntil:   data.ExpUntil,
+		Status:     data.Status,
+		CreatedAt:  data.CreatedAt,
+		UpdatedAt:  data.UpdatedAt,
+		DeletedAt:  data.DeletedAt,
+	}
+
+	return
+}
+
 func (pr *CustomerRepository) Save(req *pb.CustomerCreateRequest, generatedId string, createdTime int64) (err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
