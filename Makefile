@@ -18,6 +18,9 @@ findOne:
 
 find:
 	grpcurl --plaintext localhost:5012 CustomerService.FindAll
+
+changeStatus:
+	grpcurl --plaintext -d '{"customer_id": "1671196175094202250", "status": "accepted"}' localhost:5012 CustomerService.ChangeStatus
 	
 findSearch:
 	grpcurl --plaintext -d '{"search": "1671196175094202250", "status": "deleted"}' localhost:5012 CustomerService.FindAll

@@ -20,6 +20,13 @@ func NewCustomerDelivery(usecase domain.CustomerUsecase) *CustomerDelivery {
 // Template
 //func (pd *CustomerDelivery) Delete(ctx context.Context, req *pb.) (res *pb., err error) {}
 
+func (pd *CustomerDelivery) ChangeStatus(ctx context.Context, req *pb.CustomerChangeStatusRequest) (res *pb.OperationResponse, err error) {
+	affected, err := pd.usecase.ChangeStatus(req)
+	res = &pb.OperationResponse{IsAffected: affected}
+
+	return
+}
+
 func (pd *CustomerDelivery) FindAll(ctx context.Context, req *pb.CustomerFindAllRequest) (customer *pb.CustomerFindAllResponse, err error) {
 	customer, err = pd.usecase.FindAll(req)
 

@@ -38,10 +38,12 @@ type CustomerUsecase interface {
 	Save(req *pb.CustomerCreateRequest) error
 	FindOne(req *pb.CustomerFindOneRequest) (customer *pb.Customer, err error)
 	FindAll(req *pb.CustomerFindAllRequest) (customers *pb.CustomerFindAllResponse, err error)
+	ChangeStatus(req *pb.CustomerChangeStatusRequest) (affected bool, err error)
 }
 
 type CustomerRepository interface {
 	Save(req *pb.CustomerCreateRequest, generatedId string, createdTime int64) error
 	FindOne(req *pb.CustomerFindOneRequest) (customer *pb.Customer, err error)
 	FindAll(req *pb.CustomerFindAllRequest) (customers *pb.CustomerFindAllResponse, err error)
+	ChangeStatus(req *pb.CustomerChangeStatusRequest, updatedTime int64) (affected bool, err error)
 }

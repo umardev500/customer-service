@@ -25,12 +25,6 @@ func NewCustomerRepository(db *mongo.Database) domain.CustomerRepository {
 	}
 }
 
-// Template
-// func (pr *CustomerRepository) {
-// 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-// 	defer cancel()
-// }
-
 func (pr *CustomerRepository) parseCustomerResponse(data domain.Customer) (customer *pb.Customer) {
 	var location *pb.CustomerLocation
 
@@ -66,6 +60,31 @@ func (pr *CustomerRepository) parseCustomerResponse(data domain.Customer) (custo
 		CreatedAt:  data.CreatedAt,
 		UpdatedAt:  data.UpdatedAt,
 		DeletedAt:  data.DeletedAt,
+	}
+
+	return
+}
+
+// Template
+// func (pr *CustomerRepository) {
+// 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+// 	defer cancel()
+// }
+
+func (pr *CustomerRepository) ChangeStatus(req *pb.CustomerChangeStatusRequest, updatedTime int64) (affected bool, err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	filter := bson.M{"customer_id": req.CustomerId}
+	payload := bson.M{
+		"status":     req.Status,
+		"updated_at": updatedTime,
+	}
+	set := bson.M{"$set": payload}
+	resp, err := pr.customers.UpdateOne(ctx, filter, set)
+
+	if resp.ModifiedCount > 0 {
+		affected = true
 	}
 
 	return

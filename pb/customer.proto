@@ -69,8 +69,14 @@ message CustomerFindAllResponse {
     int64 total = 6;
 }
 
+message CustomerChangeStatusRequest {
+    string customer_id = 1;
+    string status = 2;
+}
+
 service CustomerService {
     rpc Create(CustomerCreateRequest) returns (Empty) {}
     rpc FindOne(CustomerFindOneRequest) returns (Customer) {}
     rpc FindAll(CustomerFindAllRequest) returns (CustomerFindAllResponse) {}
+    rpc ChangeStatus(CustomerChangeStatusRequest) returns (OperationResponse) {}
 }
