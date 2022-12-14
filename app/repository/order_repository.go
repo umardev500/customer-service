@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"customer/domain"
+	"customer/helper"
 	"customer/pb"
 	"math"
 	"time"
@@ -90,28 +91,32 @@ func (pr *CustomerRepository) UpdateDetail(req *pb.CustomerUpdateDetailRequest, 
 		}
 	}
 
-	detail := bson.M{
-		"npsn":     req.Detail.Npsn,
-		"name":     req.Detail.Name,
-		"email":    req.Detail.Email,
-		"wa":       req.Detail.Wa,
-		"type":     req.Detail.Type,
-		"level":    req.Detail.Level,
-		"about":    req.Detail.About,
-		"location": location,
+	detail := bson.D{
+		{Key: "npsn", Value: req.Detail.Npsn},
+		{Key: "name", Value: req.Detail.Name},
+		{Key: "email", Value: req.Detail.Email},
+		{Key: "wa", Value: req.Detail.Wa},
+		{Key: "type", Value: req.Detail.Type},
+		{Key: "level", Value: req.Detail.Level},
+		{Key: "about", Value: req.Detail.About},
+		{Key: "location", Value: location},
 	}
 
-	if req.Detail.Location == nil {
-		delete(detail, "location")
-	}
+	// Initialize a slice of bson.Elements called detailFix
+	detailFix := bson.D{}
+
+	// Call the NoEmpty function on the detail variable and pass in a pointer to detailFix
+	helper.NoEmpty(detail, &detailFix)
 
 	payload := bson.M{
-		"detail": detail,
+		"detail": detailFix,
 	}
 	set := bson.M{"$set": payload}
 	resp, err := pr.customers.UpdateOne(ctx, filter, set)
 
+	// Check if the number of documents modified by the update operation is greater than 0
 	if resp.ModifiedCount > 0 {
+		// Set affected to true if there were any modified documents
 		affected = true
 	}
 
