@@ -27,4 +27,7 @@ updateDetail:
 	
 findSearch:
 	grpcurl --plaintext -d '{"search": "1671196175094202250", "status": "deleted"}' localhost:5012 CustomerService.FindAll
+
+delete:
+	grpcurl --plaintext -d '{"customer_id": "1671079334676443995", "hard": true}' localhost:5012 CustomerService.Delete
 	

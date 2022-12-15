@@ -27,6 +27,7 @@ type CustomerServiceClient interface {
 	FindAll(ctx context.Context, in *CustomerFindAllRequest, opts ...grpc.CallOption) (*CustomerFindAllResponse, error)
 	ChangeStatus(ctx context.Context, in *CustomerChangeStatusRequest, opts ...grpc.CallOption) (*OperationResponse, error)
 	UpdateDetail(ctx context.Context, in *CustomerUpdateDetailRequest, opts ...grpc.CallOption) (*OperationResponse, error)
+	Delete(ctx context.Context, in *CustomerDeleteRequest, opts ...grpc.CallOption) (*OperationResponse, error)
 }
 
 type customerServiceClient struct {
@@ -82,6 +83,15 @@ func (c *customerServiceClient) UpdateDetail(ctx context.Context, in *CustomerUp
 	return out, nil
 }
 
+func (c *customerServiceClient) Delete(ctx context.Context, in *CustomerDeleteRequest, opts ...grpc.CallOption) (*OperationResponse, error) {
+	out := new(OperationResponse)
+	err := c.cc.Invoke(ctx, "/CustomerService/Delete", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CustomerServiceServer is the server API for CustomerService service.
 // All implementations must embed UnimplementedCustomerServiceServer
 // for forward compatibility
@@ -91,6 +101,7 @@ type CustomerServiceServer interface {
 	FindAll(context.Context, *CustomerFindAllRequest) (*CustomerFindAllResponse, error)
 	ChangeStatus(context.Context, *CustomerChangeStatusRequest) (*OperationResponse, error)
 	UpdateDetail(context.Context, *CustomerUpdateDetailRequest) (*OperationResponse, error)
+	Delete(context.Context, *CustomerDeleteRequest) (*OperationResponse, error)
 	mustEmbedUnimplementedCustomerServiceServer()
 }
 
@@ -112,6 +123,9 @@ func (UnimplementedCustomerServiceServer) ChangeStatus(context.Context, *Custome
 }
 func (UnimplementedCustomerServiceServer) UpdateDetail(context.Context, *CustomerUpdateDetailRequest) (*OperationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateDetail not implemented")
+}
+func (UnimplementedCustomerServiceServer) Delete(context.Context, *CustomerDeleteRequest) (*OperationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
 func (UnimplementedCustomerServiceServer) mustEmbedUnimplementedCustomerServiceServer() {}
 
@@ -216,6 +230,24 @@ func _CustomerService_UpdateDetail_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CustomerService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CustomerDeleteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CustomerServiceServer).Delete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/CustomerService/Delete",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CustomerServiceServer).Delete(ctx, req.(*CustomerDeleteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CustomerService_ServiceDesc is the grpc.ServiceDesc for CustomerService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -242,6 +274,10 @@ var CustomerService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateDetail",
 			Handler:    _CustomerService_UpdateDetail_Handler,
+		},
+		{
+			MethodName: "Delete",
+			Handler:    _CustomerService_Delete_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

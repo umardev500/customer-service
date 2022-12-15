@@ -79,10 +79,16 @@ message CustomerUpdateDetailRequest {
     CustomerDetail detail = 2;
 }
 
+message CustomerDeleteRequest {
+    string customer_id = 1;
+    bool hard = 2;
+}
+
 service CustomerService {
     rpc Create(CustomerCreateRequest) returns (Empty) {}
     rpc FindOne(CustomerFindOneRequest) returns (Customer) {}
     rpc FindAll(CustomerFindAllRequest) returns (CustomerFindAllResponse) {}
     rpc ChangeStatus(CustomerChangeStatusRequest) returns (OperationResponse) {}
     rpc UpdateDetail(CustomerUpdateDetailRequest) returns (OperationResponse) {}
+    rpc Delete(CustomerDeleteRequest) returns (OperationResponse) {}
 }

@@ -40,6 +40,7 @@ type CustomerUsecase interface {
 	FindAll(req *pb.CustomerFindAllRequest) (customers *pb.CustomerFindAllResponse, err error)
 	ChangeStatus(req *pb.CustomerChangeStatusRequest) (affected bool, err error)
 	UpdateDetail(req *pb.CustomerUpdateDetailRequest) (affected bool, err error)
+	Delete(req *pb.CustomerDeleteRequest) (affected bool, err error)
 }
 
 type CustomerRepository interface {
@@ -48,4 +49,5 @@ type CustomerRepository interface {
 	FindAll(req *pb.CustomerFindAllRequest) (customers *pb.CustomerFindAllResponse, err error)
 	ChangeStatus(req *pb.CustomerChangeStatusRequest, updatedTime int64) (affected bool, err error)
 	UpdateDetail(req *pb.CustomerUpdateDetailRequest, updatedTime int64) (affected bool, err error)
+	Delete(req *pb.CustomerDeleteRequest, deletedTime int64) (affected bool, err error)
 }
