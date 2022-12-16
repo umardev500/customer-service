@@ -1,0 +1,5 @@
+.air.toml
+vendor
+tmp
+go.sum
+.vscode

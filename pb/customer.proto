@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+option go_package = "./pb";
+
+message Empty {}
+
+message OperationResponse {
+    bool is_affected = 1;
+}
+
+message CustomerLocation {
+    string address = 1;
+    string village = 2;
+    string district = 3;
+    string city = 4;
+    string province = 5;
+    string postal_code = 6;
+}
+
+message CustomerDetail {
+    string npsn = 1;
+    string name = 2;
+    string email = 3;
+    string wa = 4;
+    string type = 5;
+    string level = 6;
+    string about = 7;
+    CustomerLocation location = 8;
+}
+
+message CustomerCreateRequest {
+    string user = 1;
+    string pass = 2;
+    CustomerDetail detail = 3;
+}
+
+service CustomerService {
+    rpc Create(CustomerCreateRequest) returns (Empty) {}
+}
