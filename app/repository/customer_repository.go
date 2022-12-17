@@ -177,6 +177,16 @@ func (pr *CustomerRepository) FindAll(req *pb.CustomerFindAllRequest) (customers
 
 	deleted := bson.M{"deleted_at": bson.M{"$eq": nil}}
 
+	filterData := []bson.M{
+		status,
+		deleted,
+	}
+
+	if req.Status == "deleted" {
+		deleted = bson.M{"deleted_at": bson.M{"$ne": nil}}
+		filterData = []bson.M{deleted}
+	}
+
 	customers = &pb.CustomerFindAllResponse{}
 
 	filter := bson.M{
@@ -190,10 +200,7 @@ func (pr *CustomerRepository) FindAll(req *pb.CustomerFindAllRequest) (customers
 				},
 			},
 		},
-		"$and": []bson.M{
-			status,
-			deleted,
-		},
+		"$and": filterData,
 	}
 
 	findOpt := options.Find()
