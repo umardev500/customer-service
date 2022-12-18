@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.21.8
-// source: customer.proto
+// source: pb/customer.proto
 
 package pb
 
@@ -281,5 +281,5 @@ var CustomerService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "customer.proto",
+	Metadata: "pb/customer.proto",
 }

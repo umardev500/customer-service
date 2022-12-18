@@ -1,12 +1,8 @@
 syntax = "proto3";
 
+import "pb/response.proto";
+
 option go_package = "./pb";
-
-message Empty {}
-
-message OperationResponse {
-    bool is_affected = 1;
-}
 
 message CustomerLocation {
     string address = 1;
