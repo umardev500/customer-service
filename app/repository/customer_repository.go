@@ -216,23 +216,25 @@ func (pr *CustomerRepository) FindAll(req *pb.CustomerFindAllRequest) (customers
 	findOpt.SetSkip(offset)
 	findOpt.SetLimit(perPage)
 
-	cur, err := pr.customers.Find(ctx, filter, findOpt)
-	if err != nil {
-		return
-	}
-
-	defer cur.Close(ctx)
-
-	for cur.Next(ctx) {
-		var each domain.Customer
-
-		err = cur.Decode(&each)
+	if !req.CountOnly {
+		cur, err := pr.customers.Find(ctx, filter, findOpt)
 		if err != nil {
-			return
+			return nil, err
 		}
 
-		customer := pr.parseCustomerResponse(each)
-		customers.Customers = append(customers.Customers, customer)
+		defer cur.Close(ctx)
+
+		for cur.Next(ctx) {
+			var each domain.Customer
+
+			err = cur.Decode(&each)
+			if err != nil {
+				return nil, err
+			}
+
+			customer := pr.parseCustomerResponse(each)
+			customers.Customers = append(customers.Customers, customer)
+		}
 	}
 
 	rows, _ := pr.customers.CountDocuments(ctx, filter)
