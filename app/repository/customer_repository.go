@@ -171,7 +171,7 @@ func (pr *CustomerRepository) FindAll(req *pb.CustomerFindAllRequest) (customers
 
 	s := req.Search
 	status := bson.M{"status": req.Status}
-	if req.Status == "" && req.Status != "deleted" {
+	if (req.Status == "" || req.Status == "none") && req.Status != "deleted" {
 		status = bson.M{"status": bson.M{"$ne": nil}}
 	}
 
