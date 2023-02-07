@@ -1,4 +1,4 @@
-FROM go-image as dev
+FROM golang as dev
 
 WORKDIR /app
 
