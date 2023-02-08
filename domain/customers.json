@@ -1,0 +1,27 @@
+[
+    {
+        "customer_id": "1667292823233",
+        "user": "walisongo",
+        "pass": "walisongon155",
+        "detail": {
+            "npsn": "127283728723",
+            "name": "SMK Walisongo",
+            "email": "cs@walisongo.com",
+            "wa": "+62 83879154310",
+            "type": "goverment",
+            "level": "High School",
+            "about": "About the schools",
+            "location": {
+                "address": "Jl. Raya Labuan Km.12 Rengat",
+                "village": "Menes",
+                "district": "Menes",
+                "city": "Pandeglang",
+                "province": "Banten",
+                "postal_code": 42262
+            }
+        },
+        "status": "active",
+        "exp_untile": "166722876723",
+        "created_at": "166729878926"
+    }
+]
