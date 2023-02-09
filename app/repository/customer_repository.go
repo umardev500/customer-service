@@ -173,7 +173,7 @@ func (pr *CustomerRepository) FindAll(req *pb.CustomerFindAllRequest) (customers
 	s := req.Search
 	status := bson.M{"status": req.Status}
 	isExpired := bson.M{"exp_until": bson.M{"$eq": nil}}
-	if (req.Status == "" || req.Status == "none") && req.Status != "deleted" {
+	if req.Status == "" || req.Status == "none" || req.Status == "deleted" {
 		status = bson.M{"status": bson.M{"$ne": nil}}
 		isExpired = bson.M{}
 	}
@@ -194,6 +194,9 @@ func (pr *CustomerRepository) FindAll(req *pb.CustomerFindAllRequest) (customers
 		deleted,
 		isExpired,
 	}
+
+	fmt.Println(status)
+	fmt.Println(filterData)
 
 	customers = &pb.CustomerFindAllResponse{}
 
