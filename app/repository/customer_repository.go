@@ -5,6 +5,7 @@ import (
 	"customer/domain"
 	"customer/helper"
 	"customer/pb"
+	"fmt"
 	"math"
 	"time"
 
@@ -171,20 +172,26 @@ func (pr *CustomerRepository) FindAll(req *pb.CustomerFindAllRequest) (customers
 
 	s := req.Search
 	status := bson.M{"status": req.Status}
+	isExpired := bson.M{"exp_until": bson.M{"$eq": nil}}
 	if (req.Status == "" || req.Status == "none") && req.Status != "deleted" {
 		status = bson.M{"status": bson.M{"$ne": nil}}
 	}
 
 	deleted := bson.M{"deleted_at": bson.M{"$eq": nil}}
 
+	if req.Status == "deleted" {
+		deleted = bson.M{"deleted_at": bson.M{"$ne": nil}}
+	}
+
+	if req.Status == "expired" {
+		status = bson.M{"exp_until": bson.M{"$ne": nil}}
+		isExpired = bson.M{"exp_until": bson.M{"$ne": nil}}
+	}
+
 	filterData := []bson.M{
 		status,
 		deleted,
-	}
-
-	if req.Status == "deleted" {
-		deleted = bson.M{"deleted_at": bson.M{"$ne": nil}}
-		filterData = []bson.M{deleted}
+		isExpired,
 	}
 
 	customers = &pb.CustomerFindAllResponse{}
@@ -273,6 +280,8 @@ func (pr *CustomerRepository) FindAll(req *pb.CustomerFindAllRequest) (customers
 			}
 
 			customer := pr.parseCustomerResponse(each)
+
+			fmt.Println(customer.Status)
 			customers.Customers = append(customers.Customers, customer)
 		}
 	}
