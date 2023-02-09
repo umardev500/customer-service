@@ -5,6 +5,7 @@ import (
 	"customer/domain"
 	"customer/helper"
 	"customer/pb"
+	"fmt"
 	"math"
 	"time"
 
@@ -189,10 +190,52 @@ func (pr *CustomerRepository) FindAll(req *pb.CustomerFindAllRequest) (customers
 
 	customers = &pb.CustomerFindAllResponse{}
 
+	fmt.Println(s)
+
 	filter := bson.M{
 		"$or": []bson.M{
 			{
 				"customer_id": bson.M{
+					"$regex": primitive.Regex{
+						Pattern: s,
+						Options: "i",
+					},
+				},
+			},
+			{
+				"detail.npsn": bson.M{
+					"$regex": primitive.Regex{
+						Pattern: s,
+						Options: "i",
+					},
+				},
+			},
+			{
+				"user": bson.M{
+					"$regex": primitive.Regex{
+						Pattern: s,
+						Options: "i",
+					},
+				},
+			},
+			{
+				"detail.name": bson.M{
+					"$regex": primitive.Regex{
+						Pattern: s,
+						Options: "i",
+					},
+				},
+			},
+			{
+				"detail.email": bson.M{
+					"$regex": primitive.Regex{
+						Pattern: s,
+						Options: "i",
+					},
+				},
+			},
+			{
+				"detail.wa": bson.M{
 					"$regex": primitive.Regex{
 						Pattern: s,
 						Options: "i",
