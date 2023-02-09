@@ -5,7 +5,6 @@ import (
 	"customer/domain"
 	"customer/helper"
 	"customer/pb"
-	"fmt"
 	"math"
 	"time"
 
@@ -189,8 +188,6 @@ func (pr *CustomerRepository) FindAll(req *pb.CustomerFindAllRequest) (customers
 	}
 
 	customers = &pb.CustomerFindAllResponse{}
-
-	fmt.Println(s)
 
 	filter := bson.M{
 		"$or": []bson.M{
