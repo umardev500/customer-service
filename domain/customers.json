@@ -17,11 +17,11 @@
                 "district": "Menes",
                 "city": "Pandeglang",
                 "province": "Banten",
-                "postal_code": 42262
+                "postal_code": "42262"
             }
         },
         "status": "active",
-        "exp_untile": "166722876723",
-        "created_at": "166729878926"
+        "exp_until": 166722876723,
+        "created_at": 166729878926
     }
 ]
