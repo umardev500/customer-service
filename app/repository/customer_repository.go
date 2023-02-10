@@ -78,7 +78,7 @@ func (pr *CustomerRepository) SetExp(req *pb.CustomerSetExpRequest, updatedTime 
 	defer cancel()
 
 	filter := bson.M{"customer_id": req.CustomerId}
-	payload := bson.M{"exp_until": req.ExpTime, "status": req.Status}
+	payload := bson.M{"exp_until": req.ExpTime, "status": req.Status, "updated_at": updatedTime}
 	set := bson.M{"$set": payload}
 	resp, err := pr.customers.UpdateOne(ctx, filter, set)
 	if err != nil {
