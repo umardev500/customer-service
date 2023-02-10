@@ -161,6 +161,9 @@ func (pr *CustomerRepository) UpdateDetail(req *pb.CustomerUpdateDetailRequest, 
 	}
 	set := bson.M{"$set": payload}
 	resp, err := pr.customers.UpdateOne(ctx, filter, set)
+	if err != nil {
+		return
+	}
 
 	// Check if the number of documents modified by the update operation is greater than 0
 	if resp.ModifiedCount > 0 {
