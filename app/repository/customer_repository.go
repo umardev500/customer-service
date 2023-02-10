@@ -196,10 +196,9 @@ func (pr *CustomerRepository) FindAll(req *pb.CustomerFindAllRequest) (customers
 
 	s := req.Search
 	status := bson.M{"status": req.Status}
-	isExpired := bson.M{"exp_until": bson.M{"$eq": nil}}
+	isExpired := bson.M{}
 	if req.Status == "" || req.Status == "none" || req.Status == "deleted" {
 		status = bson.M{"status": bson.M{"$ne": nil}}
-		isExpired = bson.M{}
 	}
 
 	deleted := bson.M{"deleted_at": bson.M{"$eq": nil}}
@@ -210,14 +209,25 @@ func (pr *CustomerRepository) FindAll(req *pb.CustomerFindAllRequest) (customers
 
 	if req.Status == "expired" {
 		now := time.Now().UTC().Unix()
-		status = bson.M{"exp_until": bson.M{"$lte": now}}
-		isExpired = bson.M{"exp_until": bson.M{"$ne": nil}}
+		status = bson.M{} // reset status
+		isExpired = bson.M{"exp_until": bson.M{"$lte": now}}
+	}
+
+	today := bson.M{}
+	if req.Status == "today" {
+		now := time.Now().UTC()
+		startOfToday := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.Local)
+		startOfTomorrow := startOfToday.Add(24 * time.Hour)
+
+		status = bson.M{}
+		today = bson.M{"created_at": bson.M{"$gte": startOfToday.Unix(), "$lte": startOfTomorrow.Unix()}}
 	}
 
 	filterData := []bson.M{
 		status,
 		deleted,
 		isExpired,
+		today,
 	}
 
 	customers = &pb.CustomerFindAllResponse{}
