@@ -5,7 +5,6 @@ import (
 	"customer/domain"
 	"customer/helper"
 	"customer/pb"
-	"fmt"
 	"math"
 	"time"
 
@@ -210,7 +209,8 @@ func (pr *CustomerRepository) FindAll(req *pb.CustomerFindAllRequest) (customers
 	}
 
 	if req.Status == "expired" {
-		status = bson.M{"exp_until": bson.M{"$ne": nil}}
+		now := time.Now().UTC().Unix()
+		status = bson.M{"exp_until": bson.M{"$lte": now}}
 		isExpired = bson.M{"exp_until": bson.M{"$ne": nil}}
 	}
 
@@ -219,9 +219,6 @@ func (pr *CustomerRepository) FindAll(req *pb.CustomerFindAllRequest) (customers
 		deleted,
 		isExpired,
 	}
-
-	fmt.Println(status)
-	fmt.Println(filterData)
 
 	customers = &pb.CustomerFindAllResponse{}
 
@@ -310,7 +307,6 @@ func (pr *CustomerRepository) FindAll(req *pb.CustomerFindAllRequest) (customers
 
 			customer := pr.parseCustomerResponse(each)
 
-			fmt.Println(customer.Status)
 			customers.Customers = append(customers.Customers, customer)
 		}
 	}
