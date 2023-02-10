@@ -84,7 +84,8 @@ message CustomerDeleteRequest {
 message CustomerSetExpRequest {
     string customer_id = 1;
     int64 exp_time = 2;
-    string status = 3;
+    int64 settlement_time = 3;
+    string status = 4;
 }
 
 service CustomerService {
