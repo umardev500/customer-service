@@ -81,6 +81,11 @@ message CustomerDeleteRequest {
     bool hard = 2;
 }
 
+message CustomerSetExpRequest {
+    string customer_id = 1;
+    int64 exp_time = 2;
+}
+
 service CustomerService {
     rpc Create(CustomerCreateRequest) returns (Empty) {}
     rpc FindOne(CustomerFindOneRequest) returns (Customer) {}
@@ -88,4 +93,5 @@ service CustomerService {
     rpc ChangeStatus(CustomerChangeStatusRequest) returns (OperationResponse) {}
     rpc UpdateDetail(CustomerUpdateDetailRequest) returns (OperationResponse) {}
     rpc Delete(CustomerDeleteRequest) returns (OperationResponse) {}
+    rpc SetExp(CustomerSetExpRequest) returns (OperationResponse) {}
 }

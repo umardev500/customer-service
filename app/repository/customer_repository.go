@@ -73,6 +73,26 @@ func (pr *CustomerRepository) parseCustomerResponse(data domain.Customer) (custo
 // 	defer cancel()
 // }
 
+func (pr *CustomerRepository) SetExp(req *pb.CustomerSetExpRequest, updatedTime int64) (affected bool, err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	filter := bson.M{"customer_id": req.CustomerId}
+	payload := bson.M{"exp_until": req.ExpTime}
+	set := bson.M{"$set": payload}
+	resp, err := pr.customers.UpdateOne(ctx, filter, set)
+	if err != nil {
+		return false, err
+	}
+
+	if resp.ModifiedCount > 0 {
+		affected = true
+		err = nil
+	}
+
+	return
+}
+
 func (pr *CustomerRepository) Delete(req *pb.CustomerDeleteRequest, deletedTime int64) (affected bool, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()

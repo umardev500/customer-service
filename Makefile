@@ -30,4 +30,7 @@ findSearch:
 
 delete:
 	grpcurl --plaintext -d '{"customer_id": "1671079334676443995", "hard": true}' localhost:5012 CustomerService.Delete
+
+setExp:
+	grpcurl --plaintext -d '{"customer_id": "1667292823233", "exp_time": 1}' localhost:5012 CustomerService.SetExp
 	

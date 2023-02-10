@@ -23,6 +23,13 @@ func NewCustomerUsecase(repo domain.CustomerRepository) domain.CustomerUsecase {
 // Template
 // func (pu *CustomerUsecase) {}
 
+func (pu *CustomerUsecase) SetExp(req *pb.CustomerSetExpRequest) (affected bool, err error) {
+	updatedTime := time.Now().UTC().Unix()
+	affected, err = pu.repository.SetExp(req, updatedTime)
+
+	return
+}
+
 func (pu *CustomerUsecase) Delete(req *pb.CustomerDeleteRequest) (affected bool, err error) {
 	deletedTime := time.Now().UTC().Unix()
 	affected, err = pu.repository.Delete(req, deletedTime)

@@ -41,6 +41,7 @@ type CustomerUsecase interface {
 	ChangeStatus(req *pb.CustomerChangeStatusRequest) (affected bool, err error)
 	UpdateDetail(req *pb.CustomerUpdateDetailRequest) (affected bool, err error)
 	Delete(req *pb.CustomerDeleteRequest) (affected bool, err error)
+	SetExp(req *pb.CustomerSetExpRequest) (affected bool, err error)
 }
 
 type CustomerRepository interface {
@@ -50,4 +51,5 @@ type CustomerRepository interface {
 	ChangeStatus(req *pb.CustomerChangeStatusRequest, updatedTime int64) (affected bool, err error)
 	UpdateDetail(req *pb.CustomerUpdateDetailRequest, updatedTime int64) (affected bool, err error)
 	Delete(req *pb.CustomerDeleteRequest, deletedTime int64) (affected bool, err error)
+	SetExp(req *pb.CustomerSetExpRequest, updatedTime int64) (affected bool, err error)
 }

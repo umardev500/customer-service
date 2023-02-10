@@ -19,6 +19,14 @@ func NewCustomerDelivery(usecase domain.CustomerUsecase) *CustomerDelivery {
 
 // Template
 // func (pd *CustomerDelivery) Delete(ctx context.Context, req *pb.) (res *pb., err error) {}
+
+func (pd *CustomerDelivery) SetExp(ctx context.Context, req *pb.CustomerSetExpRequest) (res *pb.OperationResponse, err error) {
+	affected, err := pd.usecase.SetExp(req)
+	res = &pb.OperationResponse{IsAffected: affected}
+
+	return
+}
+
 func (pd *CustomerDelivery) Delete(ctx context.Context, req *pb.CustomerDeleteRequest) (res *pb.OperationResponse, err error) {
 	affected, err := pd.usecase.Delete(req)
 	res = &pb.OperationResponse{IsAffected: affected}
