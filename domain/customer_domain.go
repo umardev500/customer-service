@@ -1,6 +1,9 @@
 package domain
 
-import "customer/pb"
+import (
+	"context"
+	"customer/pb"
+)
 
 type CustomerLocation struct {
 	Address    string `bson:"address"`
@@ -35,21 +38,21 @@ type Customer struct {
 }
 
 type CustomerUsecase interface {
-	Save(req *pb.CustomerCreateRequest) error
-	FindOne(req *pb.CustomerFindOneRequest) (customer *pb.Customer, err error)
-	FindAll(req *pb.CustomerFindAllRequest) (customers *pb.CustomerFindAllResponse, err error)
-	ChangeStatus(req *pb.CustomerChangeStatusRequest) (affected bool, err error)
-	UpdateDetail(req *pb.CustomerUpdateDetailRequest) (affected bool, err error)
-	Delete(req *pb.CustomerDeleteRequest) (affected bool, err error)
-	SetExp(req *pb.CustomerSetExpRequest) (affected bool, err error)
+	Save(ctx context.Context, req *pb.CustomerCreateRequest) error
+	FindOne(ctx context.Context, req *pb.CustomerFindOneRequest) (customer *pb.Customer, err error)
+	FindAll(ctx context.Context, req *pb.CustomerFindAllRequest) (customers *pb.CustomerFindAllResponse, err error)
+	ChangeStatus(ctx context.Context, req *pb.CustomerChangeStatusRequest) (affected bool, err error)
+	UpdateDetail(ctx context.Context, req *pb.CustomerUpdateDetailRequest) (affected bool, err error)
+	Delete(ctx context.Context, req *pb.CustomerDeleteRequest) (affected bool, err error)
+	SetExp(ctx context.Context, req *pb.CustomerSetExpRequest) (affected bool, err error)
 }
 
 type CustomerRepository interface {
-	Save(req *pb.CustomerCreateRequest, generatedId string, createdTime int64) error
-	FindOne(req *pb.CustomerFindOneRequest) (customer *pb.Customer, err error)
-	FindAll(req *pb.CustomerFindAllRequest) (customers *pb.CustomerFindAllResponse, err error)
-	ChangeStatus(req *pb.CustomerChangeStatusRequest, updatedTime int64) (affected bool, err error)
-	UpdateDetail(req *pb.CustomerUpdateDetailRequest, updatedTime int64) (affected bool, err error)
-	Delete(req *pb.CustomerDeleteRequest, deletedTime int64) (affected bool, err error)
-	SetExp(req *pb.CustomerSetExpRequest, updatedTime int64) (affected bool, err error)
+	Save(ctx context.Context, req *pb.CustomerCreateRequest, generatedId string, createdTime int64) error
+	FindOne(ctx context.Context, req *pb.CustomerFindOneRequest) (customer *pb.Customer, err error)
+	FindAll(ctx context.Context, req *pb.CustomerFindAllRequest) (customers *pb.CustomerFindAllResponse, err error)
+	ChangeStatus(ctx context.Context, req *pb.CustomerChangeStatusRequest, updatedTime int64) (affected bool, err error)
+	UpdateDetail(ctx context.Context, req *pb.CustomerUpdateDetailRequest, updatedTime int64) (affected bool, err error)
+	Delete(ctx context.Context, req *pb.CustomerDeleteRequest, deletedTime int64) (affected bool, err error)
+	SetExp(ctx context.Context, req *pb.CustomerSetExpRequest, updatedTime int64) (affected bool, err error)
 }

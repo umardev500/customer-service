@@ -21,48 +21,48 @@ func NewCustomerDelivery(usecase domain.CustomerUsecase) *CustomerDelivery {
 // func (pd *CustomerDelivery) Delete(ctx context.Context, req *pb.) (res *pb., err error) {}
 
 func (pd *CustomerDelivery) SetExp(ctx context.Context, req *pb.CustomerSetExpRequest) (res *pb.OperationResponse, err error) {
-	affected, err := pd.usecase.SetExp(req)
+	affected, err := pd.usecase.SetExp(ctx, req)
 	res = &pb.OperationResponse{IsAffected: affected}
 
 	return
 }
 
 func (pd *CustomerDelivery) Delete(ctx context.Context, req *pb.CustomerDeleteRequest) (res *pb.OperationResponse, err error) {
-	affected, err := pd.usecase.Delete(req)
+	affected, err := pd.usecase.Delete(ctx, req)
 	res = &pb.OperationResponse{IsAffected: affected}
 
 	return
 }
 
 func (pd *CustomerDelivery) UpdateDetail(ctx context.Context, req *pb.CustomerUpdateDetailRequest) (res *pb.OperationResponse, err error) {
-	affected, err := pd.usecase.UpdateDetail(req)
+	affected, err := pd.usecase.UpdateDetail(ctx, req)
 	res = &pb.OperationResponse{IsAffected: affected}
 
 	return
 }
 
 func (pd *CustomerDelivery) ChangeStatus(ctx context.Context, req *pb.CustomerChangeStatusRequest) (res *pb.OperationResponse, err error) {
-	affected, err := pd.usecase.ChangeStatus(req)
+	affected, err := pd.usecase.ChangeStatus(ctx, req)
 	res = &pb.OperationResponse{IsAffected: affected}
 
 	return
 }
 
 func (pd *CustomerDelivery) FindAll(ctx context.Context, req *pb.CustomerFindAllRequest) (customer *pb.CustomerFindAllResponse, err error) {
-	customer, err = pd.usecase.FindAll(req)
+	customer, err = pd.usecase.FindAll(ctx, req)
 
 	return
 }
 
 func (pd *CustomerDelivery) FindOne(ctx context.Context, req *pb.CustomerFindOneRequest) (customer *pb.Customer, err error) {
-	customer, err = pd.usecase.FindOne(req)
+	customer, err = pd.usecase.FindOne(ctx, req)
 
 	return
 }
 
 func (pd *CustomerDelivery) Create(ctx context.Context, req *pb.CustomerCreateRequest) (res *pb.Empty, err error) {
 	res = &pb.Empty{}
-	err = pd.usecase.Save(req)
+	err = pd.usecase.Save(ctx, req)
 
 	return
 }

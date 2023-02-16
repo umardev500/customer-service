@@ -72,10 +72,7 @@ func (pr *CustomerRepository) parseCustomerResponse(data domain.Customer) (custo
 // 	defer cancel()
 // }
 
-func (pr *CustomerRepository) SetExp(req *pb.CustomerSetExpRequest, updatedTime int64) (affected bool, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
+func (pr *CustomerRepository) SetExp(ctx context.Context, req *pb.CustomerSetExpRequest, updatedTime int64) (affected bool, err error) {
 	filter := bson.M{"customer_id": req.CustomerId}
 	payload := bson.M{
 		"exp_until":       req.ExpTime,
@@ -97,10 +94,7 @@ func (pr *CustomerRepository) SetExp(req *pb.CustomerSetExpRequest, updatedTime 
 	return
 }
 
-func (pr *CustomerRepository) Delete(req *pb.CustomerDeleteRequest, deletedTime int64) (affected bool, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
+func (pr *CustomerRepository) Delete(ctx context.Context, req *pb.CustomerDeleteRequest, deletedTime int64) (affected bool, err error) {
 	filter := bson.M{"customer_id": req.CustomerId}
 
 	if !req.Hard {
@@ -120,10 +114,7 @@ func (pr *CustomerRepository) Delete(req *pb.CustomerDeleteRequest, deletedTime 
 	return
 }
 
-func (pr *CustomerRepository) UpdateDetail(req *pb.CustomerUpdateDetailRequest, updatedTime int64) (affected bool, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
+func (pr *CustomerRepository) UpdateDetail(ctx context.Context, req *pb.CustomerUpdateDetailRequest, updatedTime int64) (affected bool, err error) {
 	filter := bson.M{"customer_id": req.CustomerId}
 
 	var location bson.M
@@ -174,10 +165,7 @@ func (pr *CustomerRepository) UpdateDetail(req *pb.CustomerUpdateDetailRequest, 
 	return
 }
 
-func (pr *CustomerRepository) ChangeStatus(req *pb.CustomerChangeStatusRequest, updatedTime int64) (affected bool, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
+func (pr *CustomerRepository) ChangeStatus(ctx context.Context, req *pb.CustomerChangeStatusRequest, updatedTime int64) (affected bool, err error) {
 	filter := bson.M{"customer_id": req.CustomerId}
 	payload := bson.M{
 		"status":     req.Status,
@@ -193,10 +181,7 @@ func (pr *CustomerRepository) ChangeStatus(req *pb.CustomerChangeStatusRequest, 
 	return
 }
 
-func (pr *CustomerRepository) FindAll(req *pb.CustomerFindAllRequest) (customers *pb.CustomerFindAllResponse, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
+func (pr *CustomerRepository) FindAll(ctx context.Context, req *pb.CustomerFindAllRequest) (customers *pb.CustomerFindAllResponse, err error) {
 	s := req.Search
 	status := bson.M{"status": req.Status}
 	isExpired := bson.M{}
@@ -353,10 +338,7 @@ func (pr *CustomerRepository) FindAll(req *pb.CustomerFindAllRequest) (customers
 	return
 }
 
-func (pr *CustomerRepository) FindOne(req *pb.CustomerFindOneRequest) (customer *pb.Customer, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
+func (pr *CustomerRepository) FindOne(ctx context.Context, req *pb.CustomerFindOneRequest) (customer *pb.Customer, err error) {
 	var data domain.Customer
 
 	filter := bson.M{
@@ -383,10 +365,7 @@ func (pr *CustomerRepository) FindOne(req *pb.CustomerFindOneRequest) (customer 
 	return
 }
 
-func (pr *CustomerRepository) Save(req *pb.CustomerCreateRequest, generatedId string, createdTime int64) (err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
+func (pr *CustomerRepository) Save(ctx context.Context, req *pb.CustomerCreateRequest, generatedId string, createdTime int64) (err error) {
 	status := "pending"
 
 	detail := bson.D{
