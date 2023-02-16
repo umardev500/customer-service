@@ -29,6 +29,7 @@ type CustomerServiceClient interface {
 	UpdateDetail(ctx context.Context, in *CustomerUpdateDetailRequest, opts ...grpc.CallOption) (*OperationResponse, error)
 	Delete(ctx context.Context, in *CustomerDeleteRequest, opts ...grpc.CallOption) (*OperationResponse, error)
 	SetExp(ctx context.Context, in *CustomerSetExpRequest, opts ...grpc.CallOption) (*OperationResponse, error)
+	Login(ctx context.Context, in *CustomerLoginRequest, opts ...grpc.CallOption) (*CustomerLoginResponse, error)
 }
 
 type customerServiceClient struct {
@@ -102,6 +103,15 @@ func (c *customerServiceClient) SetExp(ctx context.Context, in *CustomerSetExpRe
 	return out, nil
 }
 
+func (c *customerServiceClient) Login(ctx context.Context, in *CustomerLoginRequest, opts ...grpc.CallOption) (*CustomerLoginResponse, error) {
+	out := new(CustomerLoginResponse)
+	err := c.cc.Invoke(ctx, "/CustomerService/Login", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CustomerServiceServer is the server API for CustomerService service.
 // All implementations must embed UnimplementedCustomerServiceServer
 // for forward compatibility
@@ -113,6 +123,7 @@ type CustomerServiceServer interface {
 	UpdateDetail(context.Context, *CustomerUpdateDetailRequest) (*OperationResponse, error)
 	Delete(context.Context, *CustomerDeleteRequest) (*OperationResponse, error)
 	SetExp(context.Context, *CustomerSetExpRequest) (*OperationResponse, error)
+	Login(context.Context, *CustomerLoginRequest) (*CustomerLoginResponse, error)
 	mustEmbedUnimplementedCustomerServiceServer()
 }
 
@@ -140,6 +151,9 @@ func (UnimplementedCustomerServiceServer) Delete(context.Context, *CustomerDelet
 }
 func (UnimplementedCustomerServiceServer) SetExp(context.Context, *CustomerSetExpRequest) (*OperationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetExp not implemented")
+}
+func (UnimplementedCustomerServiceServer) Login(context.Context, *CustomerLoginRequest) (*CustomerLoginResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
 func (UnimplementedCustomerServiceServer) mustEmbedUnimplementedCustomerServiceServer() {}
 
@@ -280,6 +294,24 @@ func _CustomerService_SetExp_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CustomerService_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CustomerLoginRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CustomerServiceServer).Login(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/CustomerService/Login",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CustomerServiceServer).Login(ctx, req.(*CustomerLoginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CustomerService_ServiceDesc is the grpc.ServiceDesc for CustomerService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -314,6 +346,10 @@ var CustomerService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SetExp",
 			Handler:    _CustomerService_SetExp_Handler,
+		},
+		{
+			MethodName: "Login",
+			Handler:    _CustomerService_Login_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -88,6 +88,21 @@ message CustomerSetExpRequest {
     string status = 4;
 }
 
+message CustomerLoginRequest {
+    string user = 1;
+    string pass = 2;
+}
+
+message CustomerLoginPayload {
+    string user_id = 1;
+    string user = 2;
+}
+
+message CustomerLoginResponse {
+    bool is_empty = 1;
+    CustomerLoginPayload payload = 2;
+}
+
 service CustomerService {
     rpc Create(CustomerCreateRequest) returns (Empty) {}
     rpc FindOne(CustomerFindOneRequest) returns (Customer) {}
@@ -96,4 +111,5 @@ service CustomerService {
     rpc UpdateDetail(CustomerUpdateDetailRequest) returns (OperationResponse) {}
     rpc Delete(CustomerDeleteRequest) returns (OperationResponse) {}
     rpc SetExp(CustomerSetExpRequest) returns (OperationResponse) {}
+    rpc Login(CustomerLoginRequest) returns (CustomerLoginResponse) {}
 }
