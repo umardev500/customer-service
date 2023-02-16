@@ -42,8 +42,13 @@ message Customer {
     int64 deleted_at = 9;
 }
 
-message CustomerFindOneRequest {
+message CustomerFindRequest {
     string customer_id = 1;
+}
+
+message CustomerFindResponse {
+    bool is_empty = 1;
+    Customer payload = 2;
 }
 
 message CustomerFindAllRequest {
@@ -103,7 +108,7 @@ message CustomerLoginResponse {
 
 service CustomerService {
     rpc Create(CustomerCreateRequest) returns (Empty) {}
-    rpc FindOne(CustomerFindOneRequest) returns (Customer) {}
+    rpc Find(CustomerFindRequest) returns (CustomerFindResponse) {}
     rpc FindAll(CustomerFindAllRequest) returns (CustomerFindAllResponse) {}
     rpc ChangeStatus(CustomerChangeStatusRequest) returns (OperationResponse) {}
     rpc UpdateDetail(CustomerUpdateDetailRequest) returns (OperationResponse) {}

@@ -364,7 +364,7 @@ func (c *CustomerRepository) FindAll(ctx context.Context, req *pb.CustomerFindAl
 	return
 }
 
-func (c *CustomerRepository) FindOne(ctx context.Context, req *pb.CustomerFindOneRequest) (customer *pb.Customer, err error) {
+func (c *CustomerRepository) Find(ctx context.Context, req *pb.CustomerFindRequest) (customer *pb.Customer, err error) {
 	var data domain.Customer
 
 	filter := bson.M{"customer_id": req.CustomerId}

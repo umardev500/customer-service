@@ -44,7 +44,7 @@ type CustomerLoginResponse struct {
 
 type CustomerUsecase interface {
 	Save(ctx context.Context, req *pb.CustomerCreateRequest) error
-	FindOne(ctx context.Context, req *pb.CustomerFindOneRequest) (customer *pb.Customer, err error)
+	Find(ctx context.Context, req *pb.CustomerFindRequest) (customer *pb.CustomerFindResponse, err error)
 	FindAll(ctx context.Context, req *pb.CustomerFindAllRequest) (customers *pb.CustomerFindAllResponse, err error)
 	ChangeStatus(ctx context.Context, req *pb.CustomerChangeStatusRequest) (affected bool, err error)
 	UpdateDetail(ctx context.Context, req *pb.CustomerUpdateDetailRequest) (affected bool, err error)
@@ -55,7 +55,7 @@ type CustomerUsecase interface {
 
 type CustomerRepository interface {
 	Save(ctx context.Context, req *pb.CustomerCreateRequest, generatedId string, createdTime int64) error
-	FindOne(ctx context.Context, req *pb.CustomerFindOneRequest) (customer *pb.Customer, err error)
+	Find(ctx context.Context, req *pb.CustomerFindRequest) (customer *pb.Customer, err error)
 	FindAll(ctx context.Context, req *pb.CustomerFindAllRequest) (customers *pb.CustomerFindAllResponse, err error)
 	ChangeStatus(ctx context.Context, req *pb.CustomerChangeStatusRequest, updatedTime int64) (affected bool, err error)
 	UpdateDetail(ctx context.Context, req *pb.CustomerUpdateDetailRequest, updatedTime int64) (affected bool, err error)

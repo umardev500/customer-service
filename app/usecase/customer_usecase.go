@@ -6,6 +6,8 @@ import (
 	"customer/pb"
 	"strconv"
 	"time"
+
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // CustomerUsecase defines the use case for managing Customers.
@@ -63,8 +65,20 @@ func (c *CustomerUsecase) FindAll(ctx context.Context, req *pb.CustomerFindAllRe
 	return
 }
 
-func (c *CustomerUsecase) FindOne(ctx context.Context, req *pb.CustomerFindOneRequest) (customer *pb.Customer, err error) {
-	customer, err = c.repository.FindOne(ctx, req)
+func (c *CustomerUsecase) Find(ctx context.Context, req *pb.CustomerFindRequest) (res *pb.CustomerFindResponse, err error) {
+	customer, err := c.repository.Find(ctx, req)
+	if err == mongo.ErrNoDocuments {
+		res = &pb.CustomerFindResponse{
+			IsEmpty: true,
+		}
+		err = nil
+
+		return
+	}
+
+	res = &pb.CustomerFindResponse{
+		Payload: customer,
+	}
 
 	return
 }

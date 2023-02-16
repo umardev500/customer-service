@@ -23,7 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CustomerServiceClient interface {
 	Create(ctx context.Context, in *CustomerCreateRequest, opts ...grpc.CallOption) (*Empty, error)
-	FindOne(ctx context.Context, in *CustomerFindOneRequest, opts ...grpc.CallOption) (*Customer, error)
+	Find(ctx context.Context, in *CustomerFindRequest, opts ...grpc.CallOption) (*CustomerFindResponse, error)
 	FindAll(ctx context.Context, in *CustomerFindAllRequest, opts ...grpc.CallOption) (*CustomerFindAllResponse, error)
 	ChangeStatus(ctx context.Context, in *CustomerChangeStatusRequest, opts ...grpc.CallOption) (*OperationResponse, error)
 	UpdateDetail(ctx context.Context, in *CustomerUpdateDetailRequest, opts ...grpc.CallOption) (*OperationResponse, error)
@@ -49,9 +49,9 @@ func (c *customerServiceClient) Create(ctx context.Context, in *CustomerCreateRe
 	return out, nil
 }
 
-func (c *customerServiceClient) FindOne(ctx context.Context, in *CustomerFindOneRequest, opts ...grpc.CallOption) (*Customer, error) {
-	out := new(Customer)
-	err := c.cc.Invoke(ctx, "/CustomerService/FindOne", in, out, opts...)
+func (c *customerServiceClient) Find(ctx context.Context, in *CustomerFindRequest, opts ...grpc.CallOption) (*CustomerFindResponse, error) {
+	out := new(CustomerFindResponse)
+	err := c.cc.Invoke(ctx, "/CustomerService/Find", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -117,7 +117,7 @@ func (c *customerServiceClient) Login(ctx context.Context, in *CustomerLoginRequ
 // for forward compatibility
 type CustomerServiceServer interface {
 	Create(context.Context, *CustomerCreateRequest) (*Empty, error)
-	FindOne(context.Context, *CustomerFindOneRequest) (*Customer, error)
+	Find(context.Context, *CustomerFindRequest) (*CustomerFindResponse, error)
 	FindAll(context.Context, *CustomerFindAllRequest) (*CustomerFindAllResponse, error)
 	ChangeStatus(context.Context, *CustomerChangeStatusRequest) (*OperationResponse, error)
 	UpdateDetail(context.Context, *CustomerUpdateDetailRequest) (*OperationResponse, error)
@@ -134,8 +134,8 @@ type UnimplementedCustomerServiceServer struct {
 func (UnimplementedCustomerServiceServer) Create(context.Context, *CustomerCreateRequest) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
-func (UnimplementedCustomerServiceServer) FindOne(context.Context, *CustomerFindOneRequest) (*Customer, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method FindOne not implemented")
+func (UnimplementedCustomerServiceServer) Find(context.Context, *CustomerFindRequest) (*CustomerFindResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Find not implemented")
 }
 func (UnimplementedCustomerServiceServer) FindAll(context.Context, *CustomerFindAllRequest) (*CustomerFindAllResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindAll not implemented")
@@ -186,20 +186,20 @@ func _CustomerService_Create_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CustomerService_FindOne_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CustomerFindOneRequest)
+func _CustomerService_Find_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CustomerFindRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CustomerServiceServer).FindOne(ctx, in)
+		return srv.(CustomerServiceServer).Find(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/CustomerService/FindOne",
+		FullMethod: "/CustomerService/Find",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CustomerServiceServer).FindOne(ctx, req.(*CustomerFindOneRequest))
+		return srv.(CustomerServiceServer).Find(ctx, req.(*CustomerFindRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -324,8 +324,8 @@ var CustomerService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _CustomerService_Create_Handler,
 		},
 		{
-			MethodName: "FindOne",
-			Handler:    _CustomerService_FindOne_Handler,
+			MethodName: "Find",
+			Handler:    _CustomerService_Find_Handler,
 		},
 		{
 			MethodName: "FindAll",

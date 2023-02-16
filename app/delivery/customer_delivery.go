@@ -59,8 +59,8 @@ func (c *CustomerDelivery) FindAll(ctx context.Context, req *pb.CustomerFindAllR
 	return
 }
 
-func (c *CustomerDelivery) FindOne(ctx context.Context, req *pb.CustomerFindOneRequest) (customer *pb.Customer, err error) {
-	customer, err = c.usecase.FindOne(ctx, req)
+func (c *CustomerDelivery) Find(ctx context.Context, req *pb.CustomerFindRequest) (res *pb.CustomerFindResponse, err error) {
+	res, err = c.usecase.Find(ctx, req)
 
 	return
 }
