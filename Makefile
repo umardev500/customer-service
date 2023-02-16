@@ -14,7 +14,7 @@ create:
 	grpcurl --plaintext -d '{"user": "customeruser", "pass": "secret", "detail": {"name": "SMK Walisongo", "email": "walisongo@gmail.com", "wa": "083879154310"}}' localhost:5012 CustomerService.Create
 
 find:
-	grpcurl --plaintext -d '{"customer_id": "1667292823233s"}' localhost:5012 CustomerService.Find
+	grpcurl --plaintext -d '{"customer_id": "1667292823233"}' localhost:5012 CustomerService.Find
 
 findAll:
 	grpcurl --plaintext localhost:5012 CustomerService.FindAll

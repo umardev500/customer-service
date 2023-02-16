@@ -21,7 +21,8 @@ message CustomerDetail {
     string type = 5;
     string level = 6;
     string about = 7;
-    CustomerLocation location = 8;
+    string logo = 8;
+    CustomerLocation location = 9;
 }
 
 message CustomerCreateRequest {

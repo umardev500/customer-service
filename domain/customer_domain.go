@@ -22,6 +22,7 @@ type CustomerDetail struct {
 	Type     string            `bson:"type"`
 	Level    string            `bson:"level"`
 	About    string            `bson:"about"`
+	Logo     string            `bson:"logo"`
 	Location *CustomerLocation `bson:"location"`
 }
 

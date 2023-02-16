@@ -48,6 +48,7 @@ func (pr *CustomerRepository) parseCustomerResponse(data domain.Customer) (custo
 		Type:     data.Detail.Type,
 		Level:    data.Detail.Level,
 		About:    data.Detail.About,
+		Logo:     data.Detail.Logo,
 		Location: location,
 	}
 
