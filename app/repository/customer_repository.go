@@ -367,19 +367,7 @@ func (c *CustomerRepository) FindAll(ctx context.Context, req *pb.CustomerFindAl
 func (c *CustomerRepository) FindOne(ctx context.Context, req *pb.CustomerFindOneRequest) (customer *pb.Customer, err error) {
 	var data domain.Customer
 
-	filter := bson.M{
-		"$or": []bson.M{
-			{
-				"customer_id": req.CustomerId,
-			},
-			{
-				"$and": []bson.M{
-					{"user": req.User},
-					{"pass": req.Pass},
-				},
-			},
-		},
-	}
+	filter := bson.M{"customer_id": req.CustomerId}
 
 	err = c.customers.FindOne(ctx, filter).Decode(&data)
 	if err != nil {
