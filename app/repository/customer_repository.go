@@ -262,6 +262,14 @@ func (pr *CustomerRepository) FindAll(req *pb.CustomerFindAllRequest) (customers
 				},
 			},
 			{
+				"status": bson.M{
+					"$regex": primitive.Regex{
+						Pattern: s,
+						Options: "i",
+					},
+				},
+			},
+			{
 				"detail.name": bson.M{
 					"$regex": primitive.Regex{
 						Pattern: s,
