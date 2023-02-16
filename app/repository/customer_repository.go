@@ -174,8 +174,9 @@ func (c *CustomerRepository) UpdateDetail(ctx context.Context, req *pb.CustomerU
 	// Call the NoEmpty function on the detail variable and pass in a pointer to detailFix
 	helper.NoEmpty(detail, &detailFix)
 
-	payload := bson.M{
-		"detail": detailFix,
+	payload := bson.D{
+		{Key: "detail", Value: detailFix},
+		{Key: "updated_at", Value: updatedTime},
 	}
 	set := bson.M{"$set": payload}
 	resp, err := c.customers.UpdateOne(ctx, filter, set)
