@@ -37,6 +37,11 @@ type Customer struct {
 	DeletedAt  int64           `bson:"deleted_at"`
 }
 
+type CustomerLoginResponse struct {
+	CustomerId string `bson:"customer_id"`
+	User       string `bson:"user"`
+}
+
 type CustomerUsecase interface {
 	Save(ctx context.Context, req *pb.CustomerCreateRequest) error
 	FindOne(ctx context.Context, req *pb.CustomerFindOneRequest) (customer *pb.Customer, err error)
@@ -45,6 +50,7 @@ type CustomerUsecase interface {
 	UpdateDetail(ctx context.Context, req *pb.CustomerUpdateDetailRequest) (affected bool, err error)
 	Delete(ctx context.Context, req *pb.CustomerDeleteRequest) (affected bool, err error)
 	SetExp(ctx context.Context, req *pb.CustomerSetExpRequest) (affected bool, err error)
+	Login(ctx context.Context, req *pb.CustomerLoginRequest) (res *pb.CustomerLoginResponse, err error)
 }
 
 type CustomerRepository interface {
@@ -55,4 +61,5 @@ type CustomerRepository interface {
 	UpdateDetail(ctx context.Context, req *pb.CustomerUpdateDetailRequest, updatedTime int64) (affected bool, err error)
 	Delete(ctx context.Context, req *pb.CustomerDeleteRequest, deletedTime int64) (affected bool, err error)
 	SetExp(ctx context.Context, req *pb.CustomerSetExpRequest, updatedTime int64) (affected bool, err error)
+	Login(ctx context.Context, req *pb.CustomerLoginRequest) (res *pb.CustomerLoginResponse, err error)
 }

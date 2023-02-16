@@ -33,4 +33,7 @@ delete:
 
 setExp:
 	grpcurl --plaintext -d '{"customer_id": "1667292823233", "exp_time": 1}' localhost:5012 CustomerService.SetExp
+
+login:
+	grpcurl --plaintext -d '{"user": "walisongo", "pass": "walisongo155"}' localhost:5012 CustomerService.Login
 	

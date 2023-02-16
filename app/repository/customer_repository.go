@@ -72,7 +72,33 @@ func (pr *CustomerRepository) parseCustomerResponse(data domain.Customer) (custo
 // 	defer cancel()
 // }
 
-func (pr *CustomerRepository) SetExp(ctx context.Context, req *pb.CustomerSetExpRequest, updatedTime int64) (affected bool, err error) {
+func (c *CustomerRepository) Login(ctx context.Context, req *pb.CustomerLoginRequest) (res *pb.CustomerLoginResponse, err error) {
+	user := req.User
+	pass := req.Pass
+	filter := bson.M{"user": user, "pass": pass}
+
+	var result domain.CustomerLoginResponse
+	err = c.customers.FindOne(ctx, filter).Decode(&result)
+	if err == mongo.ErrNoDocuments {
+		res = &pb.CustomerLoginResponse{
+			IsEmpty: true,
+		}
+		err = nil
+
+		return
+	}
+
+	res = &pb.CustomerLoginResponse{
+		Payload: &pb.CustomerLoginPayload{
+			CustomerId: result.CustomerId,
+			User:       result.User,
+		},
+	}
+
+	return
+}
+
+func (c *CustomerRepository) SetExp(ctx context.Context, req *pb.CustomerSetExpRequest, updatedTime int64) (affected bool, err error) {
 	filter := bson.M{"customer_id": req.CustomerId}
 	payload := bson.M{
 		"exp_until":       req.ExpTime,
@@ -81,7 +107,7 @@ func (pr *CustomerRepository) SetExp(ctx context.Context, req *pb.CustomerSetExp
 		"updated_at":      updatedTime,
 	}
 	set := bson.M{"$set": payload}
-	resp, err := pr.customers.UpdateOne(ctx, filter, set)
+	resp, err := c.customers.UpdateOne(ctx, filter, set)
 	if err != nil {
 		return false, err
 	}
@@ -94,19 +120,19 @@ func (pr *CustomerRepository) SetExp(ctx context.Context, req *pb.CustomerSetExp
 	return
 }
 
-func (pr *CustomerRepository) Delete(ctx context.Context, req *pb.CustomerDeleteRequest, deletedTime int64) (affected bool, err error) {
+func (c *CustomerRepository) Delete(ctx context.Context, req *pb.CustomerDeleteRequest, deletedTime int64) (affected bool, err error) {
 	filter := bson.M{"customer_id": req.CustomerId}
 
 	if !req.Hard {
 		payload := bson.M{"deleted_at": deletedTime}
 		set := bson.M{"$set": payload}
-		resp, err := pr.customers.UpdateOne(ctx, filter, set)
+		resp, err := c.customers.UpdateOne(ctx, filter, set)
 		if resp.ModifiedCount > 0 {
 			return true, err
 		}
 	}
 
-	resp, err := pr.customers.DeleteOne(ctx, filter)
+	resp, err := c.customers.DeleteOne(ctx, filter)
 	if resp.DeletedCount > 0 {
 		affected = true
 	}
@@ -114,7 +140,7 @@ func (pr *CustomerRepository) Delete(ctx context.Context, req *pb.CustomerDelete
 	return
 }
 
-func (pr *CustomerRepository) UpdateDetail(ctx context.Context, req *pb.CustomerUpdateDetailRequest, updatedTime int64) (affected bool, err error) {
+func (c *CustomerRepository) UpdateDetail(ctx context.Context, req *pb.CustomerUpdateDetailRequest, updatedTime int64) (affected bool, err error) {
 	filter := bson.M{"customer_id": req.CustomerId}
 
 	var location bson.M
@@ -151,7 +177,7 @@ func (pr *CustomerRepository) UpdateDetail(ctx context.Context, req *pb.Customer
 		"detail": detailFix,
 	}
 	set := bson.M{"$set": payload}
-	resp, err := pr.customers.UpdateOne(ctx, filter, set)
+	resp, err := c.customers.UpdateOne(ctx, filter, set)
 	if err != nil {
 		return
 	}
@@ -165,14 +191,14 @@ func (pr *CustomerRepository) UpdateDetail(ctx context.Context, req *pb.Customer
 	return
 }
 
-func (pr *CustomerRepository) ChangeStatus(ctx context.Context, req *pb.CustomerChangeStatusRequest, updatedTime int64) (affected bool, err error) {
+func (c *CustomerRepository) ChangeStatus(ctx context.Context, req *pb.CustomerChangeStatusRequest, updatedTime int64) (affected bool, err error) {
 	filter := bson.M{"customer_id": req.CustomerId}
 	payload := bson.M{
 		"status":     req.Status,
 		"updated_at": updatedTime,
 	}
 	set := bson.M{"$set": payload}
-	resp, err := pr.customers.UpdateOne(ctx, filter, set)
+	resp, err := c.customers.UpdateOne(ctx, filter, set)
 
 	if resp.ModifiedCount > 0 {
 		affected = true
@@ -181,7 +207,7 @@ func (pr *CustomerRepository) ChangeStatus(ctx context.Context, req *pb.Customer
 	return
 }
 
-func (pr *CustomerRepository) FindAll(ctx context.Context, req *pb.CustomerFindAllRequest) (customers *pb.CustomerFindAllResponse, err error) {
+func (c *CustomerRepository) FindAll(ctx context.Context, req *pb.CustomerFindAllRequest) (customers *pb.CustomerFindAllResponse, err error) {
 	s := req.Search
 	status := bson.M{"status": req.Status}
 	isExpired := bson.M{}
@@ -296,7 +322,7 @@ func (pr *CustomerRepository) FindAll(ctx context.Context, req *pb.CustomerFindA
 	findOpt.SetLimit(perPage)
 
 	if !req.CountOnly {
-		cur, err := pr.customers.Find(ctx, filter, findOpt)
+		cur, err := c.customers.Find(ctx, filter, findOpt)
 		if err != nil {
 			return nil, err
 		}
@@ -311,13 +337,13 @@ func (pr *CustomerRepository) FindAll(ctx context.Context, req *pb.CustomerFindA
 				return nil, err
 			}
 
-			customer := pr.parseCustomerResponse(each)
+			customer := c.parseCustomerResponse(each)
 
 			customers.Customers = append(customers.Customers, customer)
 		}
 	}
 
-	rows, _ := pr.customers.CountDocuments(ctx, filter)
+	rows, _ := c.customers.CountDocuments(ctx, filter)
 
 	dataSize := int64(len(customers.Customers))
 	customers.Rows = rows
@@ -338,7 +364,7 @@ func (pr *CustomerRepository) FindAll(ctx context.Context, req *pb.CustomerFindA
 	return
 }
 
-func (pr *CustomerRepository) FindOne(ctx context.Context, req *pb.CustomerFindOneRequest) (customer *pb.Customer, err error) {
+func (c *CustomerRepository) FindOne(ctx context.Context, req *pb.CustomerFindOneRequest) (customer *pb.Customer, err error) {
 	var data domain.Customer
 
 	filter := bson.M{
@@ -355,17 +381,17 @@ func (pr *CustomerRepository) FindOne(ctx context.Context, req *pb.CustomerFindO
 		},
 	}
 
-	err = pr.customers.FindOne(ctx, filter).Decode(&data)
+	err = c.customers.FindOne(ctx, filter).Decode(&data)
 	if err != nil {
 		return
 	}
 
-	customer = pr.parseCustomerResponse(data)
+	customer = c.parseCustomerResponse(data)
 
 	return
 }
 
-func (pr *CustomerRepository) Save(ctx context.Context, req *pb.CustomerCreateRequest, generatedId string, createdTime int64) (err error) {
+func (c *CustomerRepository) Save(ctx context.Context, req *pb.CustomerCreateRequest, generatedId string, createdTime int64) (err error) {
 	status := "pending"
 
 	detail := bson.D{
@@ -383,7 +409,7 @@ func (pr *CustomerRepository) Save(ctx context.Context, req *pb.CustomerCreateRe
 		{Key: "created_at", Value: createdTime},
 	}
 
-	_, err = pr.customers.InsertOne(ctx, payload)
+	_, err = c.customers.InsertOne(ctx, payload)
 
 	return
 }

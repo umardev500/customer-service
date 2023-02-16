@@ -20,49 +20,54 @@ func NewCustomerDelivery(usecase domain.CustomerUsecase) *CustomerDelivery {
 // Template
 // func (pd *CustomerDelivery) Delete(ctx context.Context, req *pb.) (res *pb., err error) {}
 
-func (pd *CustomerDelivery) SetExp(ctx context.Context, req *pb.CustomerSetExpRequest) (res *pb.OperationResponse, err error) {
-	affected, err := pd.usecase.SetExp(ctx, req)
+func (c *CustomerDelivery) Login(ctx context.Context, req *pb.CustomerLoginRequest) (res *pb.CustomerLoginResponse, err error) {
+	res, err = c.usecase.Login(ctx, req)
+	return
+}
+
+func (c *CustomerDelivery) SetExp(ctx context.Context, req *pb.CustomerSetExpRequest) (res *pb.OperationResponse, err error) {
+	affected, err := c.usecase.SetExp(ctx, req)
 	res = &pb.OperationResponse{IsAffected: affected}
 
 	return
 }
 
-func (pd *CustomerDelivery) Delete(ctx context.Context, req *pb.CustomerDeleteRequest) (res *pb.OperationResponse, err error) {
-	affected, err := pd.usecase.Delete(ctx, req)
+func (c *CustomerDelivery) Delete(ctx context.Context, req *pb.CustomerDeleteRequest) (res *pb.OperationResponse, err error) {
+	affected, err := c.usecase.Delete(ctx, req)
 	res = &pb.OperationResponse{IsAffected: affected}
 
 	return
 }
 
-func (pd *CustomerDelivery) UpdateDetail(ctx context.Context, req *pb.CustomerUpdateDetailRequest) (res *pb.OperationResponse, err error) {
-	affected, err := pd.usecase.UpdateDetail(ctx, req)
+func (c *CustomerDelivery) UpdateDetail(ctx context.Context, req *pb.CustomerUpdateDetailRequest) (res *pb.OperationResponse, err error) {
+	affected, err := c.usecase.UpdateDetail(ctx, req)
 	res = &pb.OperationResponse{IsAffected: affected}
 
 	return
 }
 
-func (pd *CustomerDelivery) ChangeStatus(ctx context.Context, req *pb.CustomerChangeStatusRequest) (res *pb.OperationResponse, err error) {
-	affected, err := pd.usecase.ChangeStatus(ctx, req)
+func (c *CustomerDelivery) ChangeStatus(ctx context.Context, req *pb.CustomerChangeStatusRequest) (res *pb.OperationResponse, err error) {
+	affected, err := c.usecase.ChangeStatus(ctx, req)
 	res = &pb.OperationResponse{IsAffected: affected}
 
 	return
 }
 
-func (pd *CustomerDelivery) FindAll(ctx context.Context, req *pb.CustomerFindAllRequest) (customer *pb.CustomerFindAllResponse, err error) {
-	customer, err = pd.usecase.FindAll(ctx, req)
+func (c *CustomerDelivery) FindAll(ctx context.Context, req *pb.CustomerFindAllRequest) (customer *pb.CustomerFindAllResponse, err error) {
+	customer, err = c.usecase.FindAll(ctx, req)
 
 	return
 }
 
-func (pd *CustomerDelivery) FindOne(ctx context.Context, req *pb.CustomerFindOneRequest) (customer *pb.Customer, err error) {
-	customer, err = pd.usecase.FindOne(ctx, req)
+func (c *CustomerDelivery) FindOne(ctx context.Context, req *pb.CustomerFindOneRequest) (customer *pb.Customer, err error) {
+	customer, err = c.usecase.FindOne(ctx, req)
 
 	return
 }
 
-func (pd *CustomerDelivery) Create(ctx context.Context, req *pb.CustomerCreateRequest) (res *pb.Empty, err error) {
+func (c *CustomerDelivery) Create(ctx context.Context, req *pb.CustomerCreateRequest) (res *pb.Empty, err error) {
 	res = &pb.Empty{}
-	err = pd.usecase.Save(ctx, req)
+	err = c.usecase.Save(ctx, req)
 
 	return
 }

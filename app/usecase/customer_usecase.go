@@ -24,52 +24,57 @@ func NewCustomerUsecase(repo domain.CustomerRepository) domain.CustomerUsecase {
 // Template
 // func (pu *CustomerUsecase) {}
 
-func (pu *CustomerUsecase) SetExp(ctx context.Context, req *pb.CustomerSetExpRequest) (affected bool, err error) {
+func (c *CustomerUsecase) Login(ctx context.Context, req *pb.CustomerLoginRequest) (res *pb.CustomerLoginResponse, err error) {
+	res, err = c.repository.Login(ctx, req)
+	return
+}
+
+func (c *CustomerUsecase) SetExp(ctx context.Context, req *pb.CustomerSetExpRequest) (affected bool, err error) {
 	updatedTime := time.Now().UTC().Unix()
-	affected, err = pu.repository.SetExp(ctx, req, updatedTime)
+	affected, err = c.repository.SetExp(ctx, req, updatedTime)
 
 	return
 }
 
-func (pu *CustomerUsecase) Delete(ctx context.Context, req *pb.CustomerDeleteRequest) (affected bool, err error) {
+func (c *CustomerUsecase) Delete(ctx context.Context, req *pb.CustomerDeleteRequest) (affected bool, err error) {
 	deletedTime := time.Now().UTC().Unix()
-	affected, err = pu.repository.Delete(ctx, req, deletedTime)
+	affected, err = c.repository.Delete(ctx, req, deletedTime)
 
 	return
 }
 
-func (pu *CustomerUsecase) UpdateDetail(ctx context.Context, req *pb.CustomerUpdateDetailRequest) (affected bool, err error) {
+func (c *CustomerUsecase) UpdateDetail(ctx context.Context, req *pb.CustomerUpdateDetailRequest) (affected bool, err error) {
 	updatedTime := time.Now().UTC().Unix()
-	affected, err = pu.repository.UpdateDetail(ctx, req, updatedTime)
+	affected, err = c.repository.UpdateDetail(ctx, req, updatedTime)
 
 	return
 }
 
-func (pu *CustomerUsecase) ChangeStatus(ctx context.Context, req *pb.CustomerChangeStatusRequest) (affected bool, err error) {
+func (c *CustomerUsecase) ChangeStatus(ctx context.Context, req *pb.CustomerChangeStatusRequest) (affected bool, err error) {
 	updatedTime := time.Now().UTC().Unix()
-	affected, err = pu.repository.ChangeStatus(ctx, req, updatedTime)
+	affected, err = c.repository.ChangeStatus(ctx, req, updatedTime)
 
 	return
 }
 
-func (pu *CustomerUsecase) FindAll(ctx context.Context, req *pb.CustomerFindAllRequest) (customers *pb.CustomerFindAllResponse, err error) {
-	customers, err = pu.repository.FindAll(ctx, req)
+func (c *CustomerUsecase) FindAll(ctx context.Context, req *pb.CustomerFindAllRequest) (customers *pb.CustomerFindAllResponse, err error) {
+	customers, err = c.repository.FindAll(ctx, req)
 
 	return
 }
 
-func (pu *CustomerUsecase) FindOne(ctx context.Context, req *pb.CustomerFindOneRequest) (customer *pb.Customer, err error) {
-	customer, err = pu.repository.FindOne(ctx, req)
+func (c *CustomerUsecase) FindOne(ctx context.Context, req *pb.CustomerFindOneRequest) (customer *pb.Customer, err error) {
+	customer, err = c.repository.FindOne(ctx, req)
 
 	return
 }
 
-func (pu *CustomerUsecase) Save(ctx context.Context, req *pb.CustomerCreateRequest) (err error) {
+func (c *CustomerUsecase) Save(ctx context.Context, req *pb.CustomerCreateRequest) (err error) {
 	t := time.Now()
 	createdTime := t.Unix()
 	generatedId := strconv.Itoa(int(t.UnixNano()))
 
-	err = pu.repository.Save(ctx, req, generatedId, createdTime)
+	err = c.repository.Save(ctx, req, generatedId, createdTime)
 
 	return
 }

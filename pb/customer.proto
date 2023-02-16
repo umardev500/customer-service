@@ -94,7 +94,7 @@ message CustomerLoginRequest {
 }
 
 message CustomerLoginPayload {
-    string user_id = 1;
+    string customer_id = 1;
     string user = 2;
 }
 
