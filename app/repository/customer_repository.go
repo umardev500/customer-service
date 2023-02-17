@@ -5,6 +5,7 @@ import (
 	"customer/domain"
 	"customer/helper"
 	"customer/pb"
+	"fmt"
 	"math"
 	"time"
 
@@ -145,41 +146,39 @@ func (c *CustomerRepository) UpdateDetail(ctx context.Context, req *pb.CustomerU
 	filter := bson.M{"customer_id": req.CustomerId}
 
 	location := bson.D{}
-
 	if req.Detail.Location != nil {
 		locationValue := bson.D{
-			{Key: "address", Value: req.Detail.Location.Address},
-			{Key: "village", Value: req.Detail.Location.Village},
-			{Key: "district", Value: req.Detail.Location.District},
-			{Key: "city", Value: req.Detail.Location.City},
-			{Key: "province", Value: req.Detail.Location.Province},
-			{Key: "postal_code", Value: req.Detail.Location.PostalCode},
+			{Key: "detail.location.address", Value: req.Detail.Location.Address},
+			{Key: "detail.location.village", Value: req.Detail.Location.Village},
+			{Key: "detail.location.district", Value: req.Detail.Location.District},
+			{Key: "detail.location.city", Value: req.Detail.Location.City},
+			{Key: "detail.location.province", Value: req.Detail.Location.Province},
+			{Key: "detail.location.postal_code", Value: req.Detail.Location.PostalCode},
 		}
 
 		helper.NoEmpty(locationValue, &location)
 	}
 
 	detail := bson.D{
-		{Key: "npsn", Value: req.Detail.Npsn},
-		{Key: "name", Value: req.Detail.Name},
-		{Key: "email", Value: req.Detail.Email},
-		{Key: "wa", Value: req.Detail.Wa},
-		{Key: "type", Value: req.Detail.Type},
-		{Key: "level", Value: req.Detail.Level},
-		{Key: "about", Value: req.Detail.About},
-		{Key: "location", Value: location},
+		{Key: "detail.npsn", Value: req.Detail.Npsn},
+		{Key: "detail.name", Value: req.Detail.Name},
+		{Key: "detail.email", Value: req.Detail.Email},
+		{Key: "detail.wa", Value: req.Detail.Wa},
+		{Key: "detail.type", Value: req.Detail.Type},
+		{Key: "detail.level", Value: req.Detail.Level},
+		{Key: "detail.about", Value: req.Detail.About},
 	}
 
-	// Initialize a slice of bson.Elements called detailFix
-	detailFix := bson.D{}
+	// detailDest := bson.D{}
 
 	// Call the NoEmpty function on the detail variable and pass in a pointer to detailFix
-	helper.NoEmpty(detail, &detailFix)
+	helper.NoEmpty(detail, &detail)
 
-	payload := bson.D{
-		{Key: "detail", Value: detailFix},
-		{Key: "updated_at", Value: updatedTime},
-	}
+	fmt.Println(detail)
+
+	payload := bson.D{}
+	// payload = append(payload, det)
+
 	set := bson.M{"$set": payload}
 	resp, err := c.customers.UpdateOne(ctx, filter, set)
 	if err != nil {
