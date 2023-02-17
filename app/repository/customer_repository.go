@@ -5,7 +5,6 @@ import (
 	"customer/domain"
 	"customer/helper"
 	"customer/pb"
-	"fmt"
 	"math"
 	"time"
 
@@ -170,8 +169,6 @@ func (c *CustomerRepository) UpdateDetail(ctx context.Context, req *pb.CustomerU
 		{Key: "detail.logo", Value: req.Detail.Logo},
 	}
 	helper.NoEmpty(detail, &detail)
-
-	fmt.Println(detail)
 
 	payload := bson.D{}
 	payload = append(payload, detail...)
