@@ -5,7 +5,6 @@ import (
 	"customer/domain"
 	"customer/helper"
 	"customer/pb"
-	"fmt"
 	"math"
 	"time"
 
@@ -147,7 +146,7 @@ func (c *CustomerRepository) UpdateDetail(ctx context.Context, req *pb.CustomerU
 
 	location := bson.D{}
 	if req.Detail.Location != nil {
-		locationValue := bson.D{
+		location = bson.D{
 			{Key: "detail.location.address", Value: req.Detail.Location.Address},
 			{Key: "detail.location.village", Value: req.Detail.Location.Village},
 			{Key: "detail.location.district", Value: req.Detail.Location.District},
@@ -156,7 +155,7 @@ func (c *CustomerRepository) UpdateDetail(ctx context.Context, req *pb.CustomerU
 			{Key: "detail.location.postal_code", Value: req.Detail.Location.PostalCode},
 		}
 
-		helper.NoEmpty(locationValue, &location)
+		helper.NoEmpty(location, &location)
 	}
 
 	detail := bson.D{
@@ -168,16 +167,12 @@ func (c *CustomerRepository) UpdateDetail(ctx context.Context, req *pb.CustomerU
 		{Key: "detail.level", Value: req.Detail.Level},
 		{Key: "detail.about", Value: req.Detail.About},
 	}
-
-	// detailDest := bson.D{}
-
-	// Call the NoEmpty function on the detail variable and pass in a pointer to detailFix
 	helper.NoEmpty(detail, &detail)
 
-	fmt.Println(detail)
-
 	payload := bson.D{}
-	// payload = append(payload, det)
+	payload = append(payload, detail...)
+	payload = append(payload, location...)
+	payload = append(payload, bson.E{Key: "updated_at", Value: updatedTime})
 
 	set := bson.M{"$set": payload}
 	resp, err := c.customers.UpdateOne(ctx, filter, set)
