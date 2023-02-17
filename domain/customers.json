@@ -11,6 +11,7 @@
             "type": "goverment",
             "level": "High School",
             "about": "About the schools",
+            "logo": "/uploads/images/avatars/avatar.png",
             "location": {
                 "address": "Jl. Raya Labuan Km.12 Rengat",
                 "village": "Menes",
