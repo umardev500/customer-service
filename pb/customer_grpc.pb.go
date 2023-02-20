@@ -27,6 +27,7 @@ type CustomerServiceClient interface {
 	FindAll(ctx context.Context, in *CustomerFindAllRequest, opts ...grpc.CallOption) (*CustomerFindAllResponse, error)
 	ChangeStatus(ctx context.Context, in *CustomerChangeStatusRequest, opts ...grpc.CallOption) (*OperationResponse, error)
 	UpdateDetail(ctx context.Context, in *CustomerUpdateDetailRequest, opts ...grpc.CallOption) (*OperationResponse, error)
+	UpdateCreds(ctx context.Context, in *CustomerUpdateCredsRequest, opts ...grpc.CallOption) (*OperationResponse, error)
 	Delete(ctx context.Context, in *CustomerDeleteRequest, opts ...grpc.CallOption) (*OperationResponse, error)
 	SetExp(ctx context.Context, in *CustomerSetExpRequest, opts ...grpc.CallOption) (*OperationResponse, error)
 	Login(ctx context.Context, in *CustomerLoginRequest, opts ...grpc.CallOption) (*CustomerLoginResponse, error)
@@ -85,6 +86,15 @@ func (c *customerServiceClient) UpdateDetail(ctx context.Context, in *CustomerUp
 	return out, nil
 }
 
+func (c *customerServiceClient) UpdateCreds(ctx context.Context, in *CustomerUpdateCredsRequest, opts ...grpc.CallOption) (*OperationResponse, error) {
+	out := new(OperationResponse)
+	err := c.cc.Invoke(ctx, "/CustomerService/UpdateCreds", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *customerServiceClient) Delete(ctx context.Context, in *CustomerDeleteRequest, opts ...grpc.CallOption) (*OperationResponse, error) {
 	out := new(OperationResponse)
 	err := c.cc.Invoke(ctx, "/CustomerService/Delete", in, out, opts...)
@@ -121,6 +131,7 @@ type CustomerServiceServer interface {
 	FindAll(context.Context, *CustomerFindAllRequest) (*CustomerFindAllResponse, error)
 	ChangeStatus(context.Context, *CustomerChangeStatusRequest) (*OperationResponse, error)
 	UpdateDetail(context.Context, *CustomerUpdateDetailRequest) (*OperationResponse, error)
+	UpdateCreds(context.Context, *CustomerUpdateCredsRequest) (*OperationResponse, error)
 	Delete(context.Context, *CustomerDeleteRequest) (*OperationResponse, error)
 	SetExp(context.Context, *CustomerSetExpRequest) (*OperationResponse, error)
 	Login(context.Context, *CustomerLoginRequest) (*CustomerLoginResponse, error)
@@ -145,6 +156,9 @@ func (UnimplementedCustomerServiceServer) ChangeStatus(context.Context, *Custome
 }
 func (UnimplementedCustomerServiceServer) UpdateDetail(context.Context, *CustomerUpdateDetailRequest) (*OperationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateDetail not implemented")
+}
+func (UnimplementedCustomerServiceServer) UpdateCreds(context.Context, *CustomerUpdateCredsRequest) (*OperationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateCreds not implemented")
 }
 func (UnimplementedCustomerServiceServer) Delete(context.Context, *CustomerDeleteRequest) (*OperationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
@@ -258,6 +272,24 @@ func _CustomerService_UpdateDetail_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CustomerService_UpdateCreds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CustomerUpdateCredsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CustomerServiceServer).UpdateCreds(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/CustomerService/UpdateCreds",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CustomerServiceServer).UpdateCreds(ctx, req.(*CustomerUpdateCredsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CustomerService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CustomerDeleteRequest)
 	if err := dec(in); err != nil {
@@ -338,6 +370,10 @@ var CustomerService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateDetail",
 			Handler:    _CustomerService_UpdateDetail_Handler,
+		},
+		{
+			MethodName: "UpdateCreds",
+			Handler:    _CustomerService_UpdateCreds_Handler,
 		},
 		{
 			MethodName: "Delete",

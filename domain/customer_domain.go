@@ -52,6 +52,7 @@ type CustomerUsecase interface {
 	Delete(ctx context.Context, req *pb.CustomerDeleteRequest) (affected bool, err error)
 	SetExp(ctx context.Context, req *pb.CustomerSetExpRequest) (affected bool, err error)
 	Login(ctx context.Context, req *pb.CustomerLoginRequest) (res *pb.CustomerLoginResponse, err error)
+	UpdateCreds(ctx context.Context, req *pb.CustomerUpdateCredsRequest) (res *pb.OperationResponse, err error)
 }
 
 type CustomerRepository interface {
@@ -63,4 +64,5 @@ type CustomerRepository interface {
 	Delete(ctx context.Context, req *pb.CustomerDeleteRequest, deletedTime int64) (affected bool, err error)
 	SetExp(ctx context.Context, req *pb.CustomerSetExpRequest, updatedTime int64) (affected bool, err error)
 	Login(ctx context.Context, req *pb.CustomerLoginRequest) (res *pb.CustomerLoginResponse, err error)
+	UpdateCreds(ctx context.Context, req *pb.CustomerUpdateCredsRequest) (res *pb.OperationResponse, err error)
 }

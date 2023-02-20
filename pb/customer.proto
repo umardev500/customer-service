@@ -107,12 +107,19 @@ message CustomerLoginResponse {
     CustomerLoginPayload payload = 2;
 }
 
+message CustomerUpdateCredsRequest {
+    string user = 1;
+    string pass = 2;
+    string new_pass = 3;
+}
+
 service CustomerService {
     rpc Create(CustomerCreateRequest) returns (Empty) {}
     rpc Find(CustomerFindRequest) returns (CustomerFindResponse) {}
     rpc FindAll(CustomerFindAllRequest) returns (CustomerFindAllResponse) {}
     rpc ChangeStatus(CustomerChangeStatusRequest) returns (OperationResponse) {}
     rpc UpdateDetail(CustomerUpdateDetailRequest) returns (OperationResponse) {}
+    rpc UpdateCreds(CustomerUpdateCredsRequest) returns (OperationResponse) {}
     rpc Delete(CustomerDeleteRequest) returns (OperationResponse) {}
     rpc SetExp(CustomerSetExpRequest) returns (OperationResponse) {}
     rpc Login(CustomerLoginRequest) returns (CustomerLoginResponse) {}
