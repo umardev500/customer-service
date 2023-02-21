@@ -39,8 +39,9 @@ type Customer struct {
 }
 
 type CustomerLoginResponse struct {
-	CustomerId string `bson:"customer_id"`
-	User       string `bson:"user"`
+	CustomerId string          `bson:"customer_id"`
+	User       string          `bson:"user"`
+	Detail     *CustomerDetail `bson:"detail"`
 }
 
 type CustomerUsecase interface {

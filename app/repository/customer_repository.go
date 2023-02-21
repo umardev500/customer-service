@@ -93,6 +93,7 @@ func (c *CustomerRepository) Login(ctx context.Context, req *pb.CustomerLoginReq
 		Payload: &pb.CustomerLoginPayload{
 			CustomerId: result.CustomerId,
 			User:       result.User,
+			Name:       result.Detail.Name,
 		},
 	}
 
