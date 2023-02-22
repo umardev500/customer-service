@@ -207,7 +207,7 @@ func (c *CustomerRepository) ChangeStatus(ctx context.Context, req *pb.CustomerC
 	return
 }
 
-func (c *CustomerRepository) FindAll(ctx context.Context, req *pb.CustomerFindAllRequest) (customers *pb.CustomerFindAllResponse, err error) {
+func (c *CustomerRepository) FindAll(ctx context.Context, req *pb.CustomerFindAllRequest) (result *pb.CustomerFindAllResponse, err error) {
 	s := req.Search
 	status := bson.M{"status": req.Status}
 	isExpired := bson.M{}
@@ -244,7 +244,7 @@ func (c *CustomerRepository) FindAll(ctx context.Context, req *pb.CustomerFindAl
 		today,
 	}
 
-	customers = &pb.CustomerFindAllResponse{}
+	result = &pb.CustomerFindAllResponse{}
 
 	filter := bson.M{
 		"$or": []bson.M{
@@ -321,6 +321,7 @@ func (c *CustomerRepository) FindAll(ctx context.Context, req *pb.CustomerFindAl
 	findOpt.SetSkip(offset)
 	findOpt.SetLimit(perPage)
 
+	var customers = []*pb.Customer{}
 	if !req.CountOnly {
 		cur, err := c.customers.Find(ctx, filter, findOpt)
 		if err != nil {
@@ -339,27 +340,34 @@ func (c *CustomerRepository) FindAll(ctx context.Context, req *pb.CustomerFindAl
 
 			customer := c.parseCustomerResponse(each)
 
-			customers.Customers = append(customers.Customers, customer)
+			customers = append(customers, customer)
 		}
 	}
 
+	result.Payload = &pb.CustomerFindAllPayload{
+		Customers: customers,
+	}
+
 	rows, _ := c.customers.CountDocuments(ctx, filter)
+	if rows < 1 {
+		result.IsEmpty = true
+	}
 
-	dataSize := int64(len(customers.Customers))
-	customers.Rows = rows
-	customers.Pages = int64(math.Ceil(float64(rows) / float64(perPage)))
+	dataSize := int64(len(customers))
+	result.Payload.Rows = rows
+	result.Payload.Pages = int64(math.Ceil(float64(rows) / float64(perPage)))
 	if dataSize < 1 {
-		customers.Pages = 0
+		result.Payload.Pages = 0
 	} else if perPage == 0 {
-		customers.Pages = 1
+		result.Payload.Pages = 1
 	}
 
-	customers.PerPage = perPage
-	customers.ActivePage = page + 1
+	result.Payload.PerPage = perPage
+	result.Payload.ActivePage = page + 1
 	if dataSize < 1 {
-		customers.ActivePage = 0
+		result.Payload.ActivePage = 0
 	}
-	customers.Total = dataSize
+	result.Payload.Total = dataSize
 
 	return
 }
