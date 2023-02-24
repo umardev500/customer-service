@@ -25,6 +25,9 @@ changeStatus:
 updateDetail:
 	grpcurl --plaintext -d '{"customer_id": "1667292823233", "detail": {"npsn": "150", "name": "SMK Walisongo", "email": "walisongo@gmail.com", "wa": "+62 83879154310", "type": "private", "level": "High School", "about": "This is about the institution", "logo": "/uploads/images/avatars/avatar.png", "location": {"address": "Jl. Labuan km.12 Ciputri", "village": "Menes", "district": "Menes", "city": "pandeglang", "province": "banten", "postal_code": "42262"}}}' localhost:5012 CustomerService.UpdateDetail
 
+updateDetailShort:
+	grpcurl --plaintext -d '{"customer_id": "1667292823233", "detail": {"name": "150"}}' localhost:5012 CustomerService.UpdateDetail
+
 updateCreds:
 	grpcurl --plaintext -d '{"user": "walisongo", "pass": "walisongopass", "new_pass": "walisongo155pass"}' localhost:5012 CustomerService.UpdateCreds
 	

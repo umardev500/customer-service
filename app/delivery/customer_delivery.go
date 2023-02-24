@@ -4,6 +4,7 @@ import (
 	"context"
 	"customer/domain"
 	"customer/pb"
+	"fmt"
 )
 
 type CustomerDelivery struct {
@@ -60,6 +61,8 @@ func (c *CustomerDelivery) FindAll(ctx context.Context, req *pb.CustomerFindAllR
 }
 
 func (c *CustomerDelivery) Find(ctx context.Context, req *pb.CustomerFindRequest) (res *pb.CustomerFindResponse, err error) {
+	fmt.Println("find hit")
+
 	res, err = c.usecase.Find(ctx, req)
 
 	return
